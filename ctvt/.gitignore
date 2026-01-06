@@ -1,0 +1,21 @@
+# ===== Android =====
+android/.idea/
+android/.gradle/
+android/.kotlin/
+android/**/build/
+android/local.properties
+android/*.iml
+android/hs_err_pid*.log
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
+
+# ===== Python / API (sau này dùng ở Ubuntu) =====
+__pycache__/
+.env
+venv/
+*.pyc
