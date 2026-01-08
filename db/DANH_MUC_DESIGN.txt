@@ -1,204 +1,214 @@
-DANH_MUC_DESIGN – THIẾT KẾ BẢNG DANH MỤC CTVT
-(PHIÊN BẢN NGHIỆP VỤ – KHÔNG SQL)
+DB_DESIGN_CORE – THIẾT KẾ CỐT LÕI CSDL CTVT
+(BÁM NGUYÊN Ý TƯỞNG NGHIỆP VỤ BAN ĐẦU)
 
-==================================================
-MỤC ĐÍCH
-==================================================
-Tài liệu này mô tả chi tiết các bảng DANH MỤC
-trong Database CTVT.
+====================================================
+1. MỤC TIÊU HỆ THỐNG
+====================================================
+Xây dựng hệ thống quản lý bán gas cho Công ty Văn:
 
-Danh mục là nền tảng:
-- Ít thay đổi
-- Không xoá tuỳ tiện
-- Được tham chiếu bởi toàn bộ bảng giao dịch
+- Bán buôn + bán lẻ gas
+- Có giao bình – thu bình
+- Có bán chịu
+- Có tiền mặt + chuyển khoản
+- Có VAT đầu ra / đầu vào
+- Công ty nhỏ, nhân viên kiêm nhiệm
 
-Mọi thiết kế schema, API, Android
-PHẢI BÁM THEO tài liệu này.
-
-
-==================================================
-NGUYÊN TẮC CHUNG CHO BẢNG DANH MỤC
-==================================================
-1. Mỗi bảng có:
-   - id (khoá kỹ thuật, số)
-   - ma_* (mã nghiệp vụ, hiển thị)
-
-2. id:
-   - Không đổi
-   - Dùng làm khoá ngoại (FK)
-
-3. ma_*:
-   - Có thể đổi
-   - Dùng cho người đọc, chứng từ
-
-4. Danh mục:
-   - Không chứa logic nghiệp vụ
-   - Không chứa tổng hợp
+DB phải phản ánh ĐÚNG thực tế vận hành,
+không mô hình hoá kiểu doanh nghiệp lớn.
 
 
-==================================================
-1. BẢNG KHACH_HANG
-==================================================
-Mục đích:
-- Lưu thông tin khách hàng mua gas
-- Áp dụng cho bán buôn và bán lẻ
-
-Ý nghĩa nghiệp vụ:
-- 1 khách hàng có thể có nhiều hóa đơn
-- 1 khách hàng có thể có công nợ
-
-Các thông tin cần lưu:
-- id               : định danh kỹ thuật
-- ma_kh            : mã khách hàng (hiển thị)
-- ten_kh           : tên chính thức
-- ten_goi_tat      : tên gọi ngắn / quen
-- dia_chi          : địa chỉ giao hàng
-- dien_thoai       : số liên hệ
-- ma_so_thue       : MST (nếu có)
-- loai_khach       : bán buôn / bán lẻ
-- trang_thai       : đang giao dịch / ngừng
-
-Ghi chú:
-- Không lưu công nợ tại bảng này
-- Không lưu lịch sử giao dịch tại bảng này
+====================================================
+2. TƯ DUY CỐT LÕI (KHÔNG ĐƯỢC PHÁ)
+====================================================
+1. Một người = nhiều vai trò
+2. Giao dịch phát sinh ở nhân viên
+3. Tiền và hàng đi cùng nhau
+4. Công nợ là hệ quả của giao dịch
+5. Kế toán online KHÔNG phát sinh giao dịch
 
 
-==================================================
-2. BẢNG NHA_CUNG_CAP
-==================================================
-Mục đích:
-- Lưu thông tin nhà cung cấp gas / vỏ / dịch vụ
+====================================================
+3. NHÓM DANH MỤC (ÍT THAY ĐỔI)
+====================================================
 
-Ý nghĩa nghiệp vụ:
-- 1 nhà cung cấp có nhiều hóa đơn nhập
-- Có thể phát sinh công nợ
+3.1 NHÂN_VIÊN
+----------------
+Thực tế:
+- Nhân viên bán hàng:
+  + Bán gas
+  + Giao gas
+  + Thu tiền mặt
+  + Giữ tiền trong ca
+  + Nhập hàng
+  + Nộp tiền cho công ty
 
-Các thông tin cần lưu:
-- id
-- ma_ncc
-- ten_ncc
-- dia_chi
-- dien_thoai
-- ma_so_thue
-- trang_thai
+- Kế toán online:
+  + Không bán hàng
+  + Không giữ tiền
+  + Chỉ xử lý hóa đơn VAT và thuế
 
-Ghi chú:
-- Không lưu số tiền đã mua
-- Không lưu công nợ tại đây
+Nguyên tắc:
+- KHÔNG tách thu ngân
+- KHÔNG tách giao hàng
+- Vai trò chỉ mang tính phân loại
 
+3.2 KHÁCH_HÀNG
+---------------
+Thực tế:
+- Có khách quen
+- Có khách lẻ
+- Có khách không tên
+- Có khách cần xuất hóa đơn VAT
 
-==================================================
-3. BẢNG NHAN_VIEN
-==================================================
-Mục đích:
-- Quản lý nhân sự tham gia hệ thống
+Nguyên tắc:
+- Cho phép khách KHÔNG TÊN
+- Cho phép khách dùng để cân thuế
 
-Ý nghĩa nghiệp vụ:
-- Nhân viên lập hóa đơn
-- Nhân viên thu – chi
-- Nhân viên giao hàng
+3.3 SẢN_PHẨM
+--------------
+Thực tế:
+- Gas bán theo bình
+- Có quản lý vỏ
+- Có nhiều loại dung tích
 
-Các thông tin cần lưu:
-- id
-- ma_nv
-- ten_nv
-- dien_thoai
-- vai_tro          : admin / ban_hang / ke_toan / kho
-- trang_thai       : dang_lam / nghi_viec
+Nguyên tắc:
+- Sản phẩm ≠ tồn kho
+- Sản phẩm ≠ giá bán
 
-Ghi chú:
-- Không lưu lương
-- Không lưu doanh thu tại bảng này
+3.4 KHO
+--------
+Thực tế:
+- Nhập gas vào kho
+- Xuất gas từ kho
 
-
-==================================================
-4. BẢNG SAN_PHAM
-==================================================
-Mục đích:
-- Quản lý các loại gas và vỏ bình
-
-Ý nghĩa nghiệp vụ:
-- Sản phẩm được bán / nhập / tồn kho
-
-Các thông tin cần lưu:
-- id
-- ma_sp
-- ten_sp
-- loai_sp          : gas / vo
-- dung_tich_kg     : 12kg / 45kg / mini
-- co_vo_theo       : có / không
-- trang_thai       : dang_kinh_doanh / ngung
-
-Ghi chú:
-- Không lưu tồn kho tại đây
-- Không lưu giá bán tại đây
-
-
-==================================================
-5. BẢNG KHO
-==================================================
-Mục đích:
-- Quản lý các điểm lưu trữ hàng hóa
-
-Ý nghĩa nghiệp vụ:
-- Gas nhập về kho
-- Gas xuất từ kho
-- Tồn kho theo từng kho
-
-Các thông tin cần lưu:
-- id
-- ma_kho
-- ten_kho
-- dia_diem
-- trang_thai
-
-Ghi chú:
-- Không lưu số lượng tồn tại đây
+Nguyên tắc:
 - Kho chỉ là nơi chứa
+- Không tự tính tồn
 
 
-==================================================
-6. MỐI QUAN HỆ TƯ DUY GIỮA CÁC BẢNG
-==================================================
+====================================================
+4. NHÓM GIAO DỊCH (PHÁT SINH HÀNG NGÀY)
+====================================================
 
-KhachHang
-   ↑
-   └── HoaDonBan (giao dịch)
+4.1 HÓA_ĐƠN_BÁN
+----------------
+Thực tế:
+- Nhân viên bán cho khách
+- Có thể:
+  + Thu đủ
+  + Thu một phần
+  + Bán chịu
 
-NhaCungCap
-   ↑
-   └── HoaDonNhap (giao dịch)
+Hóa đơn bán ghi nhận:
+- Hàng đi
+- Tiền thu
+- Công nợ phát sinh
+- Giao / thu vỏ
 
-NhanVien
-   ↑
-   ├── HoaDonBan
-   ├── HoaDonNhap
-   └── PhieuThu / PhieuChi
+4.2 HÓA_ĐƠN_NHẬP
+-----------------
+Thực tế:
+- Nhân viên nhập gas từ NCC
+- Có thể:
+  + Trả ngay
+  + Mua chịu
 
-SanPham
-   ↑
-   └── HoaDonBan / HoaDonNhap / TonKho
+Hóa đơn nhập ghi nhận:
+- Hàng vào
+- Tiền chi
+- Công nợ NCC
 
-Kho
-   ↑
-   └── TonKho / HoaDon
+4.3 THU_CHI
+------------
+Thực tế:
+- Nhân viên:
+  + Thu tiền khách
+  + Nộp tiền công ty
+- Công ty:
+  + Chi tiền
+
+Thu – chi là DÒNG TIỀN THỰC,
+không phải báo cáo.
+
+4.4 NHẬT_KÝ_VỎ
+---------------
+Thực tế:
+- Giao vỏ
+- Thu vỏ
+- Đổi vỏ
+
+Nguyên tắc:
+- Vỏ quản lý bằng giao dịch
+- Không gộp vào hóa đơn
 
 
-==================================================
-7. NHỮNG ĐIỀU CỐ TÌNH KHÔNG LÀM
-==================================================
-- Không gộp danh mục và giao dịch
-- Không lưu tổng hợp vào danh mục
-- Không dùng ma_* làm khoá ngoại
-- Không nhồi thêm cột "tiện tay"
+====================================================
+5. NHÓM TRẠNG THÁI / TỔNG HỢP
+====================================================
+
+5.1 TỒN_KHO
+------------
+- Là KẾT QUẢ
+- Không nhập tay
+- Tính từ:
+  + Nhập kho
+  + Xuất kho
+
+5.2 CÔNG_NỢ
+------------
+- Là HỆ QUẢ
+- Không phải giao dịch độc lập
+- Phát sinh từ:
+  + Hóa đơn bán
+  + Hóa đơn nhập
+  + Thu – chi
+
+5.3 QUỸ
+--------
+- Có quỹ công ty
+- Có quỹ nhân viên tạm giữ
+- Dùng để đối soát
 
 
-==================================================
-8. VAI TRÒ CỦA FILE NÀY
-==================================================
-- Là chuẩn tư duy khi viết schema SQL
-- Là tài liệu đối chiếu khi sửa DB
-- Là cơ sở để thiết kế API
-- Là thứ giúp dự án không bị rối
+====================================================
+6. VAI TRÒ KẾ TOÁN ONLINE
+====================================================
+Kế toán online:
+- KHÔNG bán hàng
+- KHÔNG thu tiền
+- KHÔNG nhập kho
 
-Mọi thay đổi phải quay lại xem file này trước.
+Chỉ:
+- Lấy dữ liệu đã phát sinh
+- Xuất hóa đơn VAT
+- Cân thuế
+- Xử lý khách không tên khi cần
+
+
+====================================================
+7. TRIGGER & VIEW – QUAN ĐIỂM CHỐT
+====================================================
+
+TRIGGER:
+- Rất hạn chế
+- Chỉ dùng để CHẶN SAI
+- Không xử lý nghiệp vụ
+
+VIEW:
+- Chỉ dùng để ĐỌC
+- Báo cáo
+- Dashboard
+- Không ghi dữ liệu
+
+
+====================================================
+8. VAI TRÒ FILE NÀY
+====================================================
+File này là:
+- Kim chỉ nam nghiệp vụ
+- Chuẩn để viết schema mới
+- Chuẩn để viết API
+- Chuẩn để refactor DB
+
+Mọi thay đổi DB sau này
+PHẢI SOI LẠI FILE NÀY TRƯỚC.
