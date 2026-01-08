@@ -1,0 +1,204 @@
+DANH_MUC_DESIGN – THIẾT KẾ BẢNG DANH MỤC CTVT
+(PHIÊN BẢN NGHIỆP VỤ – KHÔNG SQL)
+
+==================================================
+MỤC ĐÍCH
+==================================================
+Tài liệu này mô tả chi tiết các bảng DANH MỤC
+trong Database CTVT.
+
+Danh mục là nền tảng:
+- Ít thay đổi
+- Không xoá tuỳ tiện
+- Được tham chiếu bởi toàn bộ bảng giao dịch
+
+Mọi thiết kế schema, API, Android
+PHẢI BÁM THEO tài liệu này.
+
+
+==================================================
+NGUYÊN TẮC CHUNG CHO BẢNG DANH MỤC
+==================================================
+1. Mỗi bảng có:
+   - id (khoá kỹ thuật, số)
+   - ma_* (mã nghiệp vụ, hiển thị)
+
+2. id:
+   - Không đổi
+   - Dùng làm khoá ngoại (FK)
+
+3. ma_*:
+   - Có thể đổi
+   - Dùng cho người đọc, chứng từ
+
+4. Danh mục:
+   - Không chứa logic nghiệp vụ
+   - Không chứa tổng hợp
+
+
+==================================================
+1. BẢNG KHACH_HANG
+==================================================
+Mục đích:
+- Lưu thông tin khách hàng mua gas
+- Áp dụng cho bán buôn và bán lẻ
+
+Ý nghĩa nghiệp vụ:
+- 1 khách hàng có thể có nhiều hóa đơn
+- 1 khách hàng có thể có công nợ
+
+Các thông tin cần lưu:
+- id               : định danh kỹ thuật
+- ma_kh            : mã khách hàng (hiển thị)
+- ten_kh           : tên chính thức
+- ten_goi_tat      : tên gọi ngắn / quen
+- dia_chi          : địa chỉ giao hàng
+- dien_thoai       : số liên hệ
+- ma_so_thue       : MST (nếu có)
+- loai_khach       : bán buôn / bán lẻ
+- trang_thai       : đang giao dịch / ngừng
+
+Ghi chú:
+- Không lưu công nợ tại bảng này
+- Không lưu lịch sử giao dịch tại bảng này
+
+
+==================================================
+2. BẢNG NHA_CUNG_CAP
+==================================================
+Mục đích:
+- Lưu thông tin nhà cung cấp gas / vỏ / dịch vụ
+
+Ý nghĩa nghiệp vụ:
+- 1 nhà cung cấp có nhiều hóa đơn nhập
+- Có thể phát sinh công nợ
+
+Các thông tin cần lưu:
+- id
+- ma_ncc
+- ten_ncc
+- dia_chi
+- dien_thoai
+- ma_so_thue
+- trang_thai
+
+Ghi chú:
+- Không lưu số tiền đã mua
+- Không lưu công nợ tại đây
+
+
+==================================================
+3. BẢNG NHAN_VIEN
+==================================================
+Mục đích:
+- Quản lý nhân sự tham gia hệ thống
+
+Ý nghĩa nghiệp vụ:
+- Nhân viên lập hóa đơn
+- Nhân viên thu – chi
+- Nhân viên giao hàng
+
+Các thông tin cần lưu:
+- id
+- ma_nv
+- ten_nv
+- dien_thoai
+- vai_tro          : admin / ban_hang / ke_toan / kho
+- trang_thai       : dang_lam / nghi_viec
+
+Ghi chú:
+- Không lưu lương
+- Không lưu doanh thu tại bảng này
+
+
+==================================================
+4. BẢNG SAN_PHAM
+==================================================
+Mục đích:
+- Quản lý các loại gas và vỏ bình
+
+Ý nghĩa nghiệp vụ:
+- Sản phẩm được bán / nhập / tồn kho
+
+Các thông tin cần lưu:
+- id
+- ma_sp
+- ten_sp
+- loai_sp          : gas / vo
+- dung_tich_kg     : 12kg / 45kg / mini
+- co_vo_theo       : có / không
+- trang_thai       : dang_kinh_doanh / ngung
+
+Ghi chú:
+- Không lưu tồn kho tại đây
+- Không lưu giá bán tại đây
+
+
+==================================================
+5. BẢNG KHO
+==================================================
+Mục đích:
+- Quản lý các điểm lưu trữ hàng hóa
+
+Ý nghĩa nghiệp vụ:
+- Gas nhập về kho
+- Gas xuất từ kho
+- Tồn kho theo từng kho
+
+Các thông tin cần lưu:
+- id
+- ma_kho
+- ten_kho
+- dia_diem
+- trang_thai
+
+Ghi chú:
+- Không lưu số lượng tồn tại đây
+- Kho chỉ là nơi chứa
+
+
+==================================================
+6. MỐI QUAN HỆ TƯ DUY GIỮA CÁC BẢNG
+==================================================
+
+KhachHang
+   ↑
+   └── HoaDonBan (giao dịch)
+
+NhaCungCap
+   ↑
+   └── HoaDonNhap (giao dịch)
+
+NhanVien
+   ↑
+   ├── HoaDonBan
+   ├── HoaDonNhap
+   └── PhieuThu / PhieuChi
+
+SanPham
+   ↑
+   └── HoaDonBan / HoaDonNhap / TonKho
+
+Kho
+   ↑
+   └── TonKho / HoaDon
+
+
+==================================================
+7. NHỮNG ĐIỀU CỐ TÌNH KHÔNG LÀM
+==================================================
+- Không gộp danh mục và giao dịch
+- Không lưu tổng hợp vào danh mục
+- Không dùng ma_* làm khoá ngoại
+- Không nhồi thêm cột "tiện tay"
+
+
+==================================================
+8. VAI TRÒ CỦA FILE NÀY
+==================================================
+- Là chuẩn tư duy khi viết schema SQL
+- Là tài liệu đối chiếu khi sửa DB
+- Là cơ sở để thiết kế API
+- Là thứ giúp dự án không bị rối
+
+Mọi thay đổi phải quay lại xem file này trước.

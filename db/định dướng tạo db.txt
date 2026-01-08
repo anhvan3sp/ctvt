@@ -1,0 +1,192 @@
+DB_DESIGN_NOTE – ĐỊNH HƯỚNG XÂY DỰNG DATABASE CTVT
+
+==================================================
+1. MỤC TIÊU TỔNG THỂ
+==================================================
+Database của dự án CTVT được xây dựng để phục vụ
+phần mềm bán hàng cho Công ty Văn – doanh nghiệp
+kinh doanh gas bán buôn và bán lẻ.
+
+Database là nền móng cho toàn hệ thống:
+- Backend API
+- Ứng dụng Android
+- Báo cáo và thống kê
+
+DB phải rõ ràng, dễ hiểu, dễ mở rộng, không rối.
+
+
+==================================================
+2. TƯ DUY XÂY DỰNG DB (CHỐT 1 LẦN)
+==================================================
+DB chuyên nghiệp KHÔNG bắt đầu từ bảng,
+mà bắt đầu từ nghiệp vụ.
+
+Ba câu hỏi gốc:
+
+1. Doanh nghiệp bán cái gì?
+   - Gas (bình, lẻ, mini)
+   - Vỏ bình
+
+2. Doanh nghiệp ghi nhận giao dịch gì?
+   - Bán hàng
+   - Nhập hàng
+   - Thu tiền
+   - Chi tiền
+   - Giao vỏ
+   - Thu vỏ
+
+3. Doanh nghiệp cần kiểm soát cái gì?
+   - Tồn kho
+   - Công nợ
+   - Dòng tiền
+
+Database = mô hình hoá nghiệp vụ,
+KHÔNG phải gom bảng cho đủ.
+
+
+==================================================
+3. CHIA NGHIỆP VỤ THÀNH 3 LỚP (BẮT BUỘC)
+==================================================
+
+----------------------------------
+LỚP 1 – DANH MỤC (ÍT THAY ĐỔI)
+----------------------------------
+- Khách hàng
+- Nhà cung cấp
+- Nhân viên
+- Sản phẩm
+- Kho
+
+Đặc điểm:
+- Ít xoá
+- Ít thay đổi
+- Là gốc để các bảng khác tham chiếu
+
+
+----------------------------------
+LỚP 2 – GIAO DỊCH (PHÁT SINH HÀNG NGÀY)
+----------------------------------
+- Hóa đơn bán
+- Hóa đơn nhập
+- Phiếu thu
+- Phiếu chi
+- Giao nhận vỏ
+
+Đặc điểm:
+- Tăng nhanh theo thời gian
+- Là “sự thật lịch sử”
+- Không chỉnh sửa tuỳ tiện
+
+
+----------------------------------
+LỚP 3 – TỔNG HỢP / TRẠNG THÁI
+----------------------------------
+- Tồn kho
+- Công nợ khách hàng
+- Công nợ nhà cung cấp
+- Số dư quỹ
+
+Đặc điểm:
+- KHÔNG nhập tay
+- Được tính toán từ dữ liệu giao dịch
+- Có thể lưu bảng riêng hoặc tính ở API
+
+
+==================================================
+4. NGUYÊN TẮC THIẾT KẾ BẢNG
+==================================================
+
+- 1 bảng = 1 trách nhiệm nghiệp vụ
+- Không bảng nào vừa là giao dịch,
+  vừa là công nợ,
+  vừa là báo cáo
+
+Khoá:
+- PK: id (INT, AUTO INCREMENT)
+- FK: *_id
+
+Mã nghiệp vụ:
+- ma_kh, ma_nv, ma_sp
+- Chỉ để hiển thị
+- KHÔNG dùng làm khoá ngoại
+
+
+==================================================
+5. PHÂN CÔNG TRÁCH NHIỆM DB – API
+==================================================
+
+Database:
+- Lưu dữ liệu
+- Ràng buộc cơ bản (PK, FK, NOT NULL)
+- Chặn dữ liệu sai hiển nhiên (tiền âm, số lượng âm)
+
+API:
+- Xử lý nghiệp vụ
+- Trừ tồn kho
+- Cộng công nợ
+- Kiểm tra luồng logic
+
+Database KHÔNG xử lý nghiệp vụ chính.
+
+
+==================================================
+6. TRIGGER VÀ VIEW
+==================================================
+
+Trigger:
+- Rất hạn chế
+- Chỉ dùng để chặn dữ liệu sai
+- Không dùng để chạy nghiệp vụ
+
+View:
+- Chỉ dùng để ĐỌC
+- Báo cáo
+- Dashboard
+- Không ghi dữ liệu
+
+
+==================================================
+7. SCHEMA VÀ PHIÊN BẢN
+==================================================
+
+Schema quản lý bằng file SQL có thứ tự:
+
+- 001_init.sql      : khởi tạo cấu trúc gốc
+- 002_*.sql         : thay đổi tiếp theo
+
+Quy tắc:
+- Không sửa file cũ
+- Mọi thay đổi đều có file mới
+- Có ghi chú rõ ràng
+
+
+==================================================
+8. VAI TRÒ CỦA SCHEMA CŨ
+==================================================
+
+Schema cũ:
+- Phản ánh nghiệp vụ thực tế đã vận hành
+- Có nhiều trigger và view
+- Có giá trị tham khảo
+
+Schema cũ:
+- KHÔNG dùng làm nền cho API mới
+- Chỉ dùng để đối chiếu nghiệp vụ
+
+Schema mới:
+- Xây lại từ đầu
+- Đơn giản
+- Rõ ràng
+- Phù hợp phát triển phần mềm
+
+
+==================================================
+9. CHỐT CUỐI
+==================================================
+
+- Không viết API khi schema chưa chốt
+- Không sửa DB theo cảm tính
+- Hiểu nghiệp vụ trước khi viết bảng
+
+File này là kim chỉ nam.
+Mọi quyết định DB phải bám theo file này.
