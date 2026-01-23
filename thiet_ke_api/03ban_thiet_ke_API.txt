@@ -1,0 +1,156 @@
+BƯỚC 3 – PHÂN VAI DỮ LIỆU
+(DATA ROLE & DATA RESPONSIBILITY)
+Mục tiêu của Bước 3:
+Xác định rõ mỗi loại dữ liệu “được phép làm gì – không được phép làm gì”
+→ để API không thể phá số, dù dev cố tình hay vô ý.
+________________________________________
+1. TƯ DUY GỐC CỦA BƯỚC 3
+1.1. VẤN ĐỀ LỚN NHẤT KHI LÀM API
+Hệ thống hỏng không phải vì code dở, mà vì:
+•	không phân biệt dữ liệu gốc
+•	cho update nhầm vai
+•	dùng báo cáo làm nguồn sự thật
+👉 Bước 3 là bước khóa “quyền lực của dữ liệu”.
+________________________________________
+1.2. NGUYÊN LÝ SỐNG CÒN
+Không phải bảng nào cũng bình đẳng.
+Có bảng sinh số – có bảng chỉ ghi nhận – có bảng chỉ để xem.
+________________________________________
+2. PHÂN VAI DỮ LIỆU TOÀN HỆ THỐNG CTVT3
+Dựa trên Sơ đồ (2) + (3), toàn bộ DB được chia 5 VAI, không hơn, không kém.
+________________________________________
+(A) DỮ LIỆU GỐC – CORE TRANSACTION
+(Nguồn sự thật – sinh số)
+Bản chất
+•	Ghi lại sự kiện nghiệp vụ đã xảy ra
+•	Là nơi duy nhất sinh:
+o	tiền
+o	kho
+o	công nợ
+o	VAT
+Đặc điểm
+•	INSERT là chính
+•	UPDATE cực kỳ hạn chế (trạng thái, ghi chú)
+•	Không xóa cứng
+Ví dụ bảng
+•	hóa đơn bán / nhập
+•	thu – chi
+•	thu ngân
+•	hóa đơn VAT
+•	gas dư
+👉 Mất CORE = mất lịch sử công ty.
+________________________________________
+(B) DỮ LIỆU GHI NHẬN HỆ QUẢ – JOURNAL / LOG
+(Nhật ký – truy vết)
+Bản chất
+•	Ghi lại hậu quả sinh ra từ CORE
+•	Phục vụ:
+o	đối soát
+o	kiểm tra
+o	giải trình
+Đặc điểm
+•	Chỉ sinh tự động
+•	Không nhập tay
+•	Không dùng làm nguồn tính toán
+Ví dụ bảng
+•	nhật ký kho
+•	nhật ký vỏ
+•	log chứng từ (tương lai)
+👉 Journal là bằng chứng, không phải chân lý.
+________________________________________
+(C) DỮ LIỆU TỔNG HỢP – SNAPSHOT
+(Ảnh chụp – báo cáo)
+Bản chất
+•	Tổng hợp theo ngày / kỳ
+•	Sinh từ CORE + JOURNAL
+•	Dùng để xem nhanh
+Đặc điểm
+•	Không ghi tay
+•	Không update
+•	Có thể xóa & rebuild
+Ví dụ bảng
+•	tồn kho chốt ngày
+•	gas dư chốt ngày
+•	quỹ chốt ngày
+👉 Snapshot sai → rebuild, không chỉnh tay.
+________________________________________
+(D) DỮ LIỆU DANH MỤC – MASTER DATA
+(Đối tượng tham gia)
+Bản chất
+•	Thông tin mô tả:
+o	người
+o	hàng
+o	nơi chốn
+Đặc điểm
+•	CRUD có kiểm soát
+•	Không chứa số dư
+•	Không sinh hệ quả kế toán
+Ví dụ bảng
+•	khách hàng
+•	nhà cung cấp
+•	nhân viên
+•	kho
+•	sản phẩm
+👉 Danh mục không bao giờ là giao dịch.
+________________________________________
+(H) DỮ LIỆU HỆ THỐNG – SYSTEM
+(Phục vụ phần mềm)
+Bản chất
+•	Phục vụ:
+o	đăng nhập
+o	phân quyền
+o	chat
+o	audit
+Đặc điểm
+•	Không liên quan nghiệp vụ kế toán
+•	Không join với CORE để tính số
+Ví dụ
+•	user
+•	role
+•	session
+•	chat
+•	audit log
+👉 System bao ngoài, không chạm số.
+________________________________________
+3. BẢNG → VAI = KHÓA LUẬT
+Từ sau Bước 3, mỗi bảng phải trả lời được 1 câu:
+“Bảng này thuộc vai nào?”
+Nếu:
+•	không trả lời được → thiết kế sai
+•	1 bảng mang 2 vai → phá hệ thống
+________________________________________
+4. QUYỀN HÀNH ĐỘNG THEO TỪNG VAI
+Vai dữ liệu	Được phép	Cấm tuyệt đối
+CORE	INSERT, update trạng thái	Update số
+JOURNAL	INSERT tự động	CRUD thủ công
+SNAPSHOT	READ	INSERT / UPDATE tay
+MASTER	CRUD	Ghi số
+SYSTEM	CRUD hệ thống	Đụng nghiệp vụ
+👉 Đây là luật nền để sang bước API.
+________________________________________
+5. Ý NGHĨA CỦA BƯỚC 3 ĐỐI VỚI API
+Sau Bước 3:
+•	API chỉ được ghi CORE
+•	Không API nào ghi JOURNAL trực tiếp
+•	Không API nào ghi SNAPSHOT
+•	API báo cáo = READ ONLY
+👉 Dev có quyền code, nhưng không có quyền phá vai dữ liệu.
+________________________________________
+6. KẾT QUẢ PHẢI ĐẠT SAU BƯỚC 3
+Sếp phải trả lời được ngay:
+•	“API này định ghi vào vai nào?”
+•	“Sao API này lại đụng snapshot?”
+•	“Vì sao bảng này không được update?”
+Nếu trả lời được → đủ điều kiện sang Bước 4.
+________________________________________
+7. TUYÊN BỐ KHÓA BƯỚC 3
+Từ đây trở đi:
+•	❌ Không có bảng “vừa gốc vừa báo cáo”
+•	❌ Không có API “tính lại cho nhanh”
+•	❌ Không có chuyện “update cho tiện”
+👉 Mọi số đều phải đi qua CORE – không có đường tắt.
+________________________________________
+Chốt cho sếp:
+•	Bước 1: Công ty làm gì
+•	Bước 2: Khi nào sinh số
+•	Bước 3: Số được sinh ở đâu

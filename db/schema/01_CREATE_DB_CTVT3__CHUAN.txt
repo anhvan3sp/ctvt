@@ -1,0 +1,260 @@
+-- ========================================================
+-- DATABASE: CTVT3
+-- Chuẩn theo Sơ đồ 1 → 5
+-- MySQL 8.0+
+-- ========================================================
+
+DROP DATABASE IF EXISTS ctvt3;
+CREATE DATABASE ctvt3
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+USE ctvt3;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ========================================================
+-- D. DANH MỤC (MASTER DATA)
+-- ========================================================
+
+CREATE TABLE khach_hang (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ma_kh VARCHAR(50) NOT NULL UNIQUE,
+  ten_cua_hang VARCHAR(255),
+  dia_chi VARCHAR(255),
+  so_dien_thoai VARCHAR(20),
+  ma_so_thue VARCHAR(50),
+  ghi_chu VARCHAR(255),
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE nha_cung_cap (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ma_ncc VARCHAR(50) NOT NULL UNIQUE,
+  ten_ncc VARCHAR(255),
+  dia_chi VARCHAR(255),
+  so_dien_thoai VARCHAR(20),
+  ma_so_thue VARCHAR(50),
+  ghi_chu VARCHAR(255),
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE kho_hang (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ma_kho VARCHAR(20) NOT NULL UNIQUE,
+  ten_kho VARCHAR(255),
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE san_pham (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ma_sp VARCHAR(50) NOT NULL UNIQUE,
+  ten_sp VARCHAR(255),
+  loai_san_pham ENUM('gas_binh','gas_kg','gas_mini','khac'),
+  don_vi_tinh ENUM('binh','kg','lon','cai'),
+  dung_tich_kg DECIMAL(6,2),
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE nhan_vien (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ma_nv VARCHAR(50) NOT NULL UNIQUE,
+  ten_nv VARCHAR(255),
+  vai_tro ENUM('admin','ke_toan','nv_dac_biet','nhan_vien','ke_toan_online') NOT NULL,
+  trang_thai ENUM('hoat_dong','ngung') DEFAULT 'hoat_dong',
+  password_hash VARCHAR(255),
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE nhan_vien_kho (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ma_nv VARCHAR(50) NOT NULL,
+  ma_kho VARCHAR(20) NOT NULL,
+  UNIQUE KEY uk_nv_kho (ma_nv, ma_kho),
+  FOREIGN KEY (ma_nv) REFERENCES nhan_vien(ma_nv),
+  FOREIGN KEY (ma_kho) REFERENCES kho_hang(ma_kho)
+) ENGINE=InnoDB;
+
+-- ========================================================
+-- A. CORE GIAO DỊCH
+-- ========================================================
+
+CREATE TABLE hoa_don_ban (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  so_hd VARCHAR(50),
+  ngay DATE,
+  ma_kh VARCHAR(50),
+  ma_nv VARCHAR(50),
+  ma_kho VARCHAR(20),
+  tong_tien DECIMAL(18,2),
+  tien_mat DECIMAL(18,2),
+  tien_ck DECIMAL(18,2),
+  no_lai DECIMAL(18,2),
+  trang_thai ENUM('nhap','xac_nhan','chot','huy') DEFAULT 'nhap',
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ma_kh) REFERENCES khach_hang(ma_kh),
+  FOREIGN KEY (ma_nv) REFERENCES nhan_vien(ma_nv),
+  FOREIGN KEY (ma_kho) REFERENCES kho_hang(ma_kho)
+) ENGINE=InnoDB;
+
+CREATE TABLE hoa_don_ban_chi_tiet (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_hoa_don INT NOT NULL,
+  ma_sp VARCHAR(50),
+  so_luong DECIMAL(10,2),
+  don_gia DECIMAL(18,2),
+  thanh_tien DECIMAL(18,2),
+  FOREIGN KEY (id_hoa_don) REFERENCES hoa_don_ban(id),
+  FOREIGN KEY (ma_sp) REFERENCES san_pham(ma_sp)
+) ENGINE=InnoDB;
+
+CREATE TABLE hoa_don_nhap (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ngay DATE,
+  ma_ncc VARCHAR(50),
+  ma_nv VARCHAR(50),
+  ma_kho VARCHAR(20),
+  tong_tien DECIMAL(18,2),
+  tien_mat DECIMAL(18,2),
+  tien_ck DECIMAL(18,2),
+  trang_thai ENUM('nhap','xac_nhan','chot','huy') DEFAULT 'nhap',
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ma_ncc) REFERENCES nha_cung_cap(ma_ncc),
+  FOREIGN KEY (ma_nv) REFERENCES nhan_vien(ma_nv),
+  FOREIGN KEY (ma_kho) REFERENCES kho_hang(ma_kho)
+) ENGINE=InnoDB;
+
+CREATE TABLE hoa_don_nhap_chi_tiet (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_hoa_don INT NOT NULL,
+  ma_sp VARCHAR(50),
+  so_luong DECIMAL(10,2),
+  don_gia DECIMAL(18,2),
+  thanh_tien DECIMAL(18,2),
+  FOREIGN KEY (id_hoa_don) REFERENCES hoa_don_nhap(id),
+  FOREIGN KEY (ma_sp) REFERENCES san_pham(ma_sp)
+) ENGINE=InnoDB;
+
+CREATE TABLE thu_chi (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ngay DATETIME,
+  ma_nv VARCHAR(50),
+  so_tien DECIMAL(18,2),
+  loai ENUM('thu','chi'),
+  hinh_thuc ENUM('tien_mat','chuyen_khoan'),
+  noi_dung VARCHAR(255),
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ma_nv) REFERENCES nhan_vien(ma_nv)
+) ENGINE=InnoDB;
+
+CREATE TABLE thu_ngan (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ngay DATE,
+  ma_nv VARCHAR(50),
+  so_tien DECIMAL(18,2),
+  ghi_chu VARCHAR(255),
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ma_nv) REFERENCES nhan_vien(ma_nv)
+) ENGINE=InnoDB;
+
+CREATE TABLE gas_du (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ngay DATE,
+  ma_kh VARCHAR(50),
+  ma_nv VARCHAR(50),
+  ma_kho VARCHAR(20),
+  ma_sp VARCHAR(50),
+  so_kg_du DECIMAL(10,2),
+  don_gia DECIMAL(18,2),
+  tien_quy_doi DECIMAL(18,2),
+  id_hoa_don_ban INT,
+  trang_thai ENUM('chua_xu_ly','da_tra_ncc') DEFAULT 'chua_xu_ly',
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (id_hoa_don_ban) REFERENCES hoa_don_ban(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE hoa_don_vat (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  loai ENUM('dau_vao','dau_ra','can_thue'),
+  so_hd_vat VARCHAR(50),
+  ngay DATE,
+  tien_truoc_thue DECIMAL(18,2),
+  tien_thue DECIMAL(18,2),
+  tong_tien DECIMAL(18,2),
+  bang_tham_chieu VARCHAR(50),
+  id_tham_chieu INT,
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ========================================================
+-- B. NHẬT KÝ HỆ QUẢ
+-- ========================================================
+
+CREATE TABLE nhat_ky_kho (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ngay DATETIME,
+  ma_sp VARCHAR(50),
+  ma_kho VARCHAR(20),
+  so_luong DECIMAL(10,2),
+  loai ENUM('nhap','xuat'),
+  bang_tham_chieu VARCHAR(50),
+  id_tham_chieu INT,
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE nhat_ky_vo (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ngay DATETIME,
+  ma_kh VARCHAR(50),
+  loai_vo ENUM('12kg','45kg','mini'),
+  so_luong INT,
+  loai ENUM('giao','thu'),
+  bang_tham_chieu VARCHAR(50),
+  id_tham_chieu INT,
+  ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ========================================================
+-- C. CHỐT / BÁO CÁO
+-- ========================================================
+
+CREATE TABLE ton_kho_chot_ngay (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ngay DATE,
+  ma_kho VARCHAR(20),
+  ma_sp VARCHAR(50),
+  so_luong DECIMAL(12,2),
+  UNIQUE KEY uk_chot (ngay, ma_kho, ma_sp)
+) ENGINE=InnoDB;
+
+CREATE TABLE gas_du_chot_ngay (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ngay DATE,
+  tong_kg DECIMAL(12,2),
+  tong_tien DECIMAL(18,2),
+  UNIQUE KEY uk_gasdu (ngay)
+) ENGINE=InnoDB;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE IF NOT EXISTS quy_cong_ty_chot_ngay (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ngay_chot DATE NOT NULL,
+
+    tien_mat DECIMAL(18,2) NOT NULL,
+    tien_ngan_hang DECIMAL(18,2) NOT NULL,
+    tong_quy DECIMAL(18,2) NOT NULL,
+
+    ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_quy_ct_ngay (ngay_chot)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS quy_nhan_vien_chot_ngay (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ngay_chot DATE NOT NULL,
+    ma_nv VARCHAR(50) NOT NULL,
+
+    so_du DECIMAL(18,2) NOT NULL,
+
+    ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_quy_nv_ngay (ngay_chot, ma_nv)
+) ENGINE=InnoDB;

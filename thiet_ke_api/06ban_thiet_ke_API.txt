@@ -1,0 +1,204 @@
+BƯỚC 6 – THIẾT KẾ HỢP ĐỒNG API
+
+(API CONTRACT – KHÓA NGƯỜI GỌI, KHÔNG KHÓA DEV)
+
+Mục tiêu của Bước 6:
+Quy định rõ API nhận cái gì – trả cái gì – trong điều kiện nào – và từ chối khi nào
+→ để frontend, mobile, dev khác không thể gọi bừa.
+
+1. BẢN CHẤT CỦA HỢP ĐỒNG API
+
+API Contract không phải code, mà là:
+
+Cam kết giữa:
+
+hệ thống ↔ người gọi
+
+Ranh giới:
+
+cái được phép
+
+cái bị cấm
+
+👉 Không có hợp đồng → API sẽ bị lạm dụng.
+
+2. NGUYÊN TẮC TỔNG QUÁT CỦA API CONTRACT
+
+Áp dụng cho mọi API trong hệ thống:
+
+Mỗi API đại diện 1 sự kiện
+
+Không API nào nhận “data cho tiện”
+
+Không API nào tự suy đoán dữ liệu thiếu
+
+Không API nào trả số liệu tổng hợp để làm nguồn tính
+
+Lỗi nghiệp vụ phải nói rõ lý do, không trả lỗi mơ hồ
+
+3. CẤU TRÚC CHUẨN CỦA 1 API CONTRACT
+
+Mỗi API bắt buộc phải được mô tả đủ 9 mục sau:
+
+(1) TÊN API
+
+Ngắn
+
+Gắn với sự kiện
+
+Không gắn với bảng
+
+(2) MỤC ĐÍCH NGHIỆP VỤ
+
+API này đại diện cho sự kiện gì
+
+Xảy ra trong đời thật lúc nào
+
+❌ Không viết “tạo / sửa / xóa record”
+
+(3) ĐỐI TƯỢNG TÁC ĐỘNG
+
+Chứng từ nào
+
+Thực thể nào
+
+👉 Giúp người gọi không dùng nhầm API.
+
+(4) INPUT ĐƯỢC PHÉP
+
+Danh sách field bắt buộc
+
+Danh sách field tùy chọn
+
+👉 Input thừa → từ chối, không ignore.
+
+(5) INPUT BỊ CẤM
+
+Những field:
+
+hệ thống tự sinh
+
+không thuộc sự kiện
+
+👉 Đây là hàng rào số 1 chống phá số.
+
+(6) ĐIỀU KIỆN HỢP LỆ
+
+API chỉ được thực thi khi:
+
+Đúng vai trò
+
+Đúng trạng thái
+
+Không vi phạm luật bất biến (Bước 4)
+
+👉 Sai 1 điều → reject ngay.
+
+(7) HỆ QUẢ SINH RA (SIDE EFFECT)
+
+Bảng CORE nào được ghi
+
+Những hệ quả tự động nào được sinh
+
+👉 Người gọi phải biết trước hậu quả, không “gọi thử”.
+
+(8) KẾT QUẢ TRẢ VỀ
+
+Chỉ trả:
+
+mã chứng từ
+
+trạng thái mới
+
+Không trả:
+
+số dư
+
+số tổng hợp
+
+👉 Tránh frontend dùng API như nguồn tính.
+
+(9) CÁC LỖI NGHIỆP VỤ CÓ THỂ XẢY RA
+
+Sai quyền
+
+Sai trạng thái
+
+Thiếu dữ liệu bắt buộc
+
+Vi phạm luật kế toán
+
+👉 Lỗi phải định danh được, không mập mờ.
+
+4. NHÓM HỢP ĐỒNG THEO LOẠI API
+A. API GHI NHẬN SỰ KIỆN
+
+Bắt buộc đủ 9 mục
+
+Không cho batch
+
+Không cho “save all”
+
+B. API THAY ĐỔI TRẠNG THÁI
+
+Kiểm soát chặt:
+
+trạng thái trước
+
+trạng thái sau
+
+Không cho nhảy cóc
+
+C. API ĐỌC / BÁO CÁO
+
+Không có side effect
+
+Không được nhận filter “nguy hiểm”
+
+Không trả dữ liệu gốc để chỉnh
+
+5. NGUYÊN TẮC VIẾT CONTRACT (ĐỂ SAU NÀY KHÔNG CÃI)
+
+Viết bằng ngôn ngữ nghiệp vụ
+
+Không dùng thuật ngữ kỹ thuật mơ hồ
+
+Người không code vẫn đọc hiểu
+
+Có thể dùng làm tài liệu kiểm toán
+
+👉 Contract là tài sản của công ty, không phải của dev.
+
+6. KẾT QUẢ PHẢI ĐẠT SAU BƯỚC 6
+
+Sau bước này:
+
+Frontend biết được gọi gì – không được gọi gì
+
+Dev backend không tự ý thêm field
+
+Sếp nhìn contract là biết API đúng hay sai
+
+👉 API không còn là “hộp đen”.
+
+7. TUYÊN BỐ KHÓA BƯỚC 6
+
+Từ sau Bước 6:
+
+❌ Không API nào được code nếu chưa có contract
+
+❌ Không sửa API mà không sửa contract
+
+❌ Contract là nguồn tham chiếu duy nhất khi tranh cãi
+
+👉 Contract đúng = hệ thống không lệch.
+
+Chốt tiến độ:
+
+Bước 6 đã khóa người gọi API
+
+Còn lại:
+
+Bước 7: Tổ chức kiến trúc code
+
+Bước 8: Viết code & test

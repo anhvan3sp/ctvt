@@ -1,0 +1,104 @@
+BƯỚC 1 – HIỂU & ĐÓNG KHUNG NGHIỆP VỤ (BUSINESS FRAME)
+CTVT3 – BẢN CHUẨN ĐỂ LÀM API
+Mục tiêu của Bước 1:
+Khóa chặt “hệ thống đang làm việc gì trong đời thật”
+→ để từ bước 2 trở đi không còn tranh cãi, không đoán, không sửa ngược.
+________________________________________
+1. PHẠM VI NGHIỆP VỤ CỦA HỆ THỐNG CTVT3
+Hệ thống CTVT3 CHỈ phục vụ:
+•	Vận hành kinh doanh gas hằng ngày
+•	Ghi nhận nghiệp vụ đã xảy ra ngoài đời
+•	Kiểm soát:
+o	tiền
+o	kho
+o	công nợ
+o	VAT
+•	Phục vụ đối soát – kiểm tra – truy vết
+❌ CTVT3 KHÔNG phải:
+•	phần mềm kế toán tổng hợp
+•	phần mềm ERP đầy đủ
+•	phần mềm báo cáo tài chính chuẩn mực quốc gia
+👉 Điều này khóa kỳ vọng, tránh thiết kế API sai mục tiêu.
+________________________________________
+2. DANH SÁCH NGHIỆP VỤ GỐC (ĐÃ CHỐT – KHÔNG PHÁT SINH)
+Dựa trên Sơ đồ 1, CTVT3 có 8 nghiệp vụ gốc, không thêm, không bớt:
+1.	Quản lý danh mục
+2.	Nhập gas
+3.	Bán gas (nghiệp vụ trung tâm)
+4.	Thu – chi phát sinh
+5.	Thu ngân (nhân viên nộp tiền)
+6.	Đặt hàng
+o	khách đặt trước
+o	NCC đặt trước
+7.	Quản lý tổng hợp – công nợ – VAT – lợi nhuận
+8.	Kế toán dịch vụ – cân thuế VAT
+👉 Mỗi nghiệp vụ gốc sau này sẽ sinh ra 1 nhóm API riêng, không trộn.
+________________________________________
+3. ĐỊNH NGHĨA BẢN CHẤT MỖI NGHIỆP VỤ (KHÔNG NÓI DB)
+Ở bước 1 TUYỆT ĐỐI không nói bảng, chỉ nói đời thật.
+Ví dụ cách hiểu chuẩn:
+•	Nhập gas
+= công ty nhận gas từ NCC
+= có thể trả tiền ngay hoặc nợ
+= có thể có VAT hoặc không
+•	Bán gas
+= giao gas cho khách
+= có thể thu đủ / thiếu / trả trước
+= có thể phát sinh vỏ + gas dư + VAT
+•	Thu – chi phát sinh
+= tiền ra / vào không gắn hàng hóa
+👉 Hiểu đúng bản chất → bước sau không viết API sai.
+________________________________________
+4. MỖI NGHIỆP VỤ TẠO RA CÁI GÌ (OUTPUT ĐỜI THẬT)
+Bước 1 chỉ chốt ở mức khái niệm, chưa gắn bảng.
+Nghiệp vụ	Tạo ra
+Nhập gas	Hóa đơn nhập
+Bán gas	Hóa đơn bán
+Thu – chi	Phiếu thu / chi
+Thu ngân	Phiếu nộp tiền
+Đặt hàng	Hóa đơn chỉ tiền
+Cân thuế	Hóa đơn VAT
+👉 Không có nghiệp vụ nào “chỉ cập nhật số”
+👉 Tất cả phải tạo chứng từ.
+________________________________________
+5. XÁC ĐỊNH NHỮNG THỨ BỊ ẢNH HƯỞNG (KHÔNG TÍNH TOÁN)
+Ở bước 1, chỉ xác định CÓ / KHÔNG, không tính bao nhiêu.
+•	Kho
+•	Quỹ công ty
+•	Quỹ nhân viên
+•	Công nợ khách
+•	Công nợ NCC
+•	VAT
+•	Lợi nhuận NV
+👉 Mục đích:
+để API sau này không “tiện tay” đụng vào thứ không thuộc nghiệp vụ đó.
+________________________________________
+6. NHỮNG THỨ TUYỆT ĐỐI KHÔNG LÀ NGHIỆP VỤ
+Bước 1 phải nói rõ để cấm ngay từ đầu:
+•	Báo cáo không phải nghiệp vụ
+•	Snapshot không phải nghiệp vụ
+•	Chốt số không phải nghiệp vụ phát sinh tiền
+•	User / chat không phải nghiệp vụ kế toán
+👉 Những thứ này KHÔNG được sinh API ghi số.
+________________________________________
+7. KẾT QUẢ CẦN ĐẠT SAU BƯỚC 1
+Sau khi hoàn thành Bước 1, sếp phải trả lời được không cần nhìn DB:
+1.	Công ty đang làm những việc gì?
+2.	Việc nào sinh tiền, việc nào không?
+3.	Việc nào bắt buộc có chứng từ?
+4.	Việc nào tuyệt đối không được sửa lại?
+👉 Nếu trả lời trôi chảy → đủ điều kiện sang Bước 2.
+________________________________________
+8. TUYÊN BỐ KHÓA BƯỚC 1 (RẤT QUAN TRỌNG)
+Từ sau Bước 1:
+❌ Không phát sinh nghiệp vụ mới
+❌ Không “tiện tay” gộp nghiệp vụ
+❌ Không vì code dễ mà đổi bản chất
+Mọi thiết kế API về sau chỉ là triển khai lại đúng những gì đã khóa ở Bước 1.
+________________________________________
+Chốt lại cho sếp:
+•	Bước 1 chỉ nói nghiệp vụ
+•	Không DB – không API – không code
+•	Mục tiêu: khóa tư duy, không cho lệch về sau
+
+

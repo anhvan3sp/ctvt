@@ -1,0 +1,24 @@
+journal/
+│
+├── README.md
+│
+├── entities/                 # Mapping bảng NHAT_KY_HE_QUA
+│   ├── nhat_ky_kho.py
+│   ├── nhat_ky_vo.py
+│   └── log_chung_tu.py       # (đã đề xuất trong sơ đồ – để sẵn)
+│
+├── writers/                  # GHI NHẬT KÝ – KHÔNG LOGIC NGHIỆP VỤ
+│   ├── nhat_ky_kho_writer.py
+│   ├── nhat_ky_vo_writer.py
+│   └── log_chung_tu_writer.py
+│
+├── builders/                 # DỰNG DÒNG NHẬT KÝ TỪ CORE
+│   ├── kho_from_hoa_don_nhap.py
+│   ├── kho_from_hoa_don_ban.py
+│   ├── vo_from_hoa_don_ban.py
+│   └── chung_tu_from_core.py
+│
+└── enums/                    # Enum RIÊNG cho nhật ký
+    ├── loai_nhat_ky_kho.py
+    ├── loai_nhat_ky_vo.py
+    └── loai_su_kien_chung_tu.py

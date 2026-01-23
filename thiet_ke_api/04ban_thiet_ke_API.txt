@@ -1,0 +1,118 @@
+BƯỚC 4 – CHỐT QUY TẮC BẤT BIẾN
+(INVARIANT RULES – HIẾN PHÁP HỆ THỐNG)
+Mục tiêu của Bước 4:
+Đặt ra những luật KHÔNG BAO GIỜ ĐƯỢC PHÁ,
+để dù thay dev, thay framework, thay công nghệ
+→ số liệu vẫn không sai.
+________________________________________
+1. KHÁI NIỆM CỐT LÕI CỦA BƯỚC 4
+1.1. QUY TẮC BẤT BIẾN LÀ GÌ?
+Là những điều:
+•	Đúng trong mọi hoàn cảnh
+•	Không phụ thuộc:
+o	UI
+o	API
+o	DB engine
+•	Không bị thay đổi vì “tiện” hay “nhanh”
+👉 Code có thể refactor, luật thì không.
+________________________________________
+1.2. VÌ SAO PHẢI CHỐT LUẬT TRƯỚC API?
+Vì:
+•	API chỉ là công cụ
+•	Dev chỉ là người triển khai
+•	Luật mới là thứ bảo vệ tiền
+👉 Không có luật → API sẽ dần biến thành CRUD.
+________________________________________
+2. NHÓM QUY TẮC BẤT BIẾN CỐT LÕI (ÁP DỤNG TOÀN HỆ THỐNG)
+I. QUY TẮC NGUỒN SỰ THẬT
+1.	Mọi con số chỉ được sinh từ CORE
+2.	Không bảng nào ngoài CORE được sinh số
+3.	Báo cáo và snapshot không phải nguồn sự thật
+4.	Snapshot sai → rebuild, không chỉnh tay
+👉 Mục tiêu: cắt đứt đường tính ngược.
+________________________________________
+II. QUY TẮC SỰ KIỆN
+5.	Không có sự kiện → không có số
+6.	Mỗi sự kiện nghiệp vụ chỉ được ghi một lần
+7.	Sự kiện đã ghi → không sửa hậu quả
+8.	Điều chỉnh = tạo sự kiện mới
+👉 Mục tiêu: bảo toàn lịch sử.
+________________________________________
+III. QUY TẮC TRẠNG THÁI
+9.	Mọi chứng từ bắt buộc có trạng thái
+10.	Chỉ chứng từ hợp lệ mới ảnh hưởng số
+11.	Chứng từ đã chốt → không sửa, không hủy
+12.	Chứng từ nháp không sinh số
+👉 Trạng thái = hàng rào pháp lý của số liệu.
+________________________________________
+IV. QUY TẮC KHÔNG UPDATE SỐ
+13.	Không API nào được:
+•	update tồn kho
+•	update công nợ
+•	update quỹ
+14.	Không bảng nào chứa “số dư hiện tại” để update
+15.	Mọi số dư đều là kết quả truy vấn
+👉 Nếu thấy API “update số” → thiết kế sai.
+________________________________________
+V. QUY TẮC PHÂN TÁCH TIỀN – HÀNG – THUẾ
+16.	Tiền ≠ hàng ≠ VAT
+17.	VAT tách khỏi doanh thu
+18.	VAT có thể tồn tại độc lập với bán hàng
+19.	VAT cân thuế không tính lợi nhuận
+👉 Mục tiêu: không nhập nhằng kế toán.
+________________________________________
+VI. QUY TẮC CÔNG NỢ
+20.	Công nợ là hệ quả, không phải dữ liệu gốc
+21.	Công nợ có thể dương hoặc âm
+22.	Không bảng “công nợ tổng” để update
+23.	Công nợ chỉ được tổng hợp từ CORE
+👉 Công nợ = lịch sử + tổng hợp, không phải số lưu sẵn.
+________________________________________
+VII. QUY TẮC QUỸ
+24.	Quỹ chỉ thay đổi khi thực thu / thực chi
+25.	Hóa đơn không thu tiền → không chạm quỹ
+26.	Thu ngân chỉ là dịch chuyển tiền nội bộ
+27.	Nhân viên không tự chốt quỹ
+👉 Quỹ là tiền thật, phải khóa chặt.
+________________________________________
+VIII. QUY TẮC BÁO CÁO
+28.	Báo cáo = READ ONLY
+29.	Không báo cáo nào được ghi DB
+30.	Mọi chỉnh sửa báo cáo → quay lại chứng từ
+31.	Báo cáo không được làm nguồn tính toán
+👉 Báo cáo chỉ để xem – đối soát – phát hiện sai.
+________________________________________
+IX. QUY TẮC HỆ THỐNG & CON NGƯỜI
+32.	Quyền gắn với vai trò, không gắn cá nhân
+33.	Dev không có quyền sửa số
+34.	Admin có quyền cứu hộ nhưng phải để lại dấu vết
+35.	Mọi thao tác quan trọng phải có audit log
+👉 Người có quyền cao càng phải bị ghi lại.
+________________________________________
+3. NHỮNG HÀNH VI BỊ CẤM TUYỆT ĐỐI (RED FLAGS)
+Nếu trong quá trình làm API mà thấy:
+•	“Update lại tồn kho cho đúng”
+•	“Fix nhanh số công nợ”
+•	“Cho sửa snapshot”
+•	“Cho admin chỉnh trực tiếp”
+👉 DỪNG NGAY – vi phạm Bước 4.
+________________________________________
+4. KẾT QUẢ PHẢI ĐẠT SAU BƯỚC 4
+Sau bước này, sếp phải:
+•	Chỉ cần nhìn API là biết đúng hay sai
+•	Không cần đọc code vẫn bắt lỗi logic
+•	Không phụ thuộc dev để bảo vệ số
+👉 Bước 4 chính là lá chắn cuối cùng.
+________________________________________
+5. TUYÊN BỐ KHÓA BƯỚC 4
+Từ sau Bước 4:
+•	❌ Không thêm “ngoại lệ”
+•	❌ Không phá luật vì tiện
+•	❌ Không vì gấp mà bỏ nguyên tắc
+👉 Luật đã chốt = nền móng sống lâu của hệ thống.
+________________________________________
+Chốt cho sếp:
+•	Bước 1: Công ty làm gì
+•	Bước 2: Khi nào sinh số
+•	Bước 3: Số sinh ở đâu
+•	Bước 4: Luật không được phá

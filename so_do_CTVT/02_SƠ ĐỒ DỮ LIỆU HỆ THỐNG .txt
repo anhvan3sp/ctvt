@@ -1,0 +1,136 @@
+SƠ ĐỒ (2): SƠ ĐỒ DỮ LIỆU HỆ THỐNG CTVT3
+(Bản chuẩn – thống nhất – không phát sinh thêm sơ đồ)
+________________________________________
+I. MỤC ĐÍCH SƠ ĐỒ (2)
+Sơ đồ (2) được thiết kế để:
+1. Chuyển nghiệp vụ (Sơ đồ 1) thành cấu trúc dữ liệu
+2. Phân loại rõ vai trò của từng bảng
+3. Ngăn việc DB và API làm sai nghiệp vụ
+________________________________________
+II. CẤU TRÚC TỔNG THỂ CỦA SƠ ĐỒ (2)
+Sơ đồ (2) gồm 05 LỚP DỮ LIỆU, KHÔNG PHẢI 05 SƠ ĐỒ RIÊNG.
+LỚP A – Dữ liệu giao dịch gốc (Core Transaction)
+LỚP B – Dữ liệu ghi nhận hệ quả (Journal / Log)
+LỚP C – Dữ liệu tổng hợp – báo cáo (Snapshot)
+LỚP D – Dữ liệu danh mục (Master Data)
+LỚP H – Dữ liệu hệ thống hỗ trợ (System)
+👉 Tất cả nằm trong SƠ ĐỒ (2), chỉ khác vai trò.
+________________________________________
+III. LỚP A – DỮ LIỆU GIAO DỊCH GỐC
+(Nguồn sự thật – không được thiếu)
+Định nghĩa
+- Mỗi dòng = 1 sự kiện kinh doanh thật
+- Sinh ra tiền / kho / công nợ / VAT
+- Mất là mất lịch sử
+Các bảng
+hoa_don_ban
+hoa_don_ban_chi_tiet
+
+hoa_don_nhap
+hoa_don_nhap_chi_tiet
+
+thu_chi
+thu_ngan
+
+hoa_don_vat
+gas_du
+Nguyên tắc
+- Chỉ INSERT
+- UPDATE rất hạn chế (trạng thái, ghi chú)
+- Tuyệt đối không tính ngược từ bảng khác
+________________________________________
+IV. LỚP B – DỮ LIỆU GHI NHẬN HỆ QUẢ
+(Sinh ra từ lớp A – không được nhập tay)
+Định nghĩa
+- Ghi lại hậu quả của giao dịch
+- Phục vụ truy vết, đối soát, kiểm toán
+Các bảng
+nhat_ky_kho
+nhat_ky_vo
+(log thay đổi trạng thái chứng từ – ctvt3 đề xuất)
+Nguyên tắc
+- Sinh tự động từ lớp A
+- Không được dùng làm dữ liệu gốc
+- Không được nhập thủ công
+________________________________________
+V. LỚP C – DỮ LIỆU TỔNG HỢP / BÁO CÁO
+(Được xóa – được tạo lại)
+Định nghĩa
+- Snapshot theo ngày / kỳ
+- Chỉ để đọc và báo cáo
+Các bảng
+ton_kho_chot
+ton_kho_chot_ngay
+
+gas_du_chot
+gas_du_chot_ngay
+Nguyên tắc
+- Không được update thủ công
+- Không được làm nguồn tính toán
+- Có thể xóa và rebuild
+________________________________________
+VI. LỚP D – DỮ LIỆU DANH MỤC (MASTER DATA)
+Định nghĩa
+- Đối tượng tham gia nghiệp vụ
+- Không tự sinh số liệu
+Các bảng
+khach_hang
+nha_cung_cap
+nhan_vien
+kho_hang
+san_pham
+nhan_vien_kho
+Nguyên tắc
+- Chỉ khai báo
+- Không sinh tiền – kho – công nợ
+________________________________________
+VII. LỚP H – DỮ LIỆU HỆ THỐNG HỖ TRỢ
+Định nghĩa
+- Phục vụ vận hành phần mềm
+- Không tồn tại trong kế toán ngoài đời
+Các thành phần
+user
+phan_quyen / role
+dang_nhap / phien_lam_viec
+chat_noi_bo
+log_truy_cap
+log_thao_tac
+Nguyên tắc
+- Không được chạm dữ liệu lớp A, B, C
+- Chỉ kiểm soát quyền truy cập
+________________________________________
+VIII. QUY TẮC VÀNG CỦA SƠ ĐỒ (2)
+1. Mỗi bảng chỉ thuộc MỘT LỚP
+2. Bảng lớp A là nguồn duy nhất sinh số
+3. Bảng lớp B, C tuyệt đối không tính ngược
+4. Danh mục không bao giờ là giao dịch
+5. Hệ thống không bao giờ là nghiệp vụ
+________________________________________
+IX. SƠ ĐỒ TỔNG QUAN (DẠNG CHỮ)
+SƠ ĐỒ (1) – NGHIỆP VỤ
+        ↓
+LỚP A – Giao dịch gốc
+        ↓
+LỚP B – Ghi nhận hệ quả
+        ↓
+LỚP C – Tổng hợp / báo cáo
+
+LỚP D – Danh mục (tham gia xuyên suốt)
+LỚP H – Hệ thống (bao ngoài, không chạm số)
+________________________________________
+3. CHỐT CUỐI – SẾP CẦN NHỚ 1 ĐIỀU
+Không phải:
+“Thêm 2D, 2H”
+Mà là:
+SƠ ĐỒ (2) có 5 LỚP, mỗi lớp đúng 1 vai
+Từ giờ trở đi, sếp chỉ nói:
+•	“Bảng này thuộc lớp nào?”
+→ là biết đúng hay sai ngay.
+________________________________________
+👉 BƯỚC TIẾP THEO ĐÚNG TRÌNH TỰ
+SƠ ĐỒ (3): KIẾN TRÚC DB CTVT3
+•	Danh sách bảng cuối cùng
+•	Gộp / tách bảng
+•	Loại bỏ bảng sai vai
+Khi sếp nói: “Làm Sơ đồ 3”, em làm tiếp.
+ 

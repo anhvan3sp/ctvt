@@ -1,0 +1,169 @@
+SƠ ĐỒ (5): TRẠNG THÁI – PHÂN QUYỀN – KIỂM SOÁT QUỸ
+CTVT3 – BẢN CHUẨN CUỐI (PHÙ HỢP CÔNG TY NHỎ – SẴN SÀNG NÂNG CẤP)
+________________________________________
+I. MỤC ĐÍCH SƠ ĐỒ (5)
+Sơ đồ (5) dùng để:
+1.	Xác định AI được làm CÁI GÌ
+2.	Xác định CHỨNG TỪ đi qua các TRẠNG THÁI nào
+3.	Khóa dòng tiền: tiền mặt – chuyển khoản – VAT
+4.	Cho phép vận hành linh hoạt hiện tại
+5.	Nhưng KHÔNG phá được số liệu về sau
+👉 Sơ đồ (5) không tạo nghiệp vụ mới
+👉 Chỉ kiểm soát con người + quyền + trạng thái
+________________________________________
+II. DANH SÁCH VAI TRÒ (ROLE) CHUẨN
+CTVT3 có 5 vai trò, phù hợp quy mô hiện tại:
+1.	ADMIN (Sếp)
+2.	KẾ TOÁN
+3.	NHÂN VIÊN ĐẶC BIỆT
+4.	NHÂN VIÊN
+5.	KẾ TOÁN ONLINE
+________________________________________
+III. QUYỀN CHI TIẾT THEO TỪNG VAI TRÒ
+________________________________________
+(1) ADMIN (SẾP)
+Nguyên tắc
+•	Không hạn chế
+•	Toàn quyền
+•	Có thể làm thay mọi vai trò
+Quyền
+•	CRUD toàn bộ danh mục
+•	Lập / sửa / hủy mọi chứng từ
+•	Chuyển mọi trạng thái chứng từ
+•	Xem, chốt, mở lại mọi báo cáo
+•	Quản lý cấu hình hệ thống
+👉 ADMIN = quyền cứu hộ + quyền kiểm soát cuối
+________________________________________
+(2) KẾ TOÁN (KẾ TOÁN NỘI BỘ)
+Vai trò cốt lõi
+•	Chủ chứng từ
+•	Chủ dòng tiền
+•	Chủ báo cáo
+ĐƯỢC PHÉP
+•	Lập & xác nhận:
+o	Hóa đơn bán
+o	Hóa đơn nhập
+o	Phiếu thu
+o	Phiếu chi
+o	Phiếu thu ngân
+•	Xác nhận chuyển khoản
+•	Quản lý quỹ công ty:
+o	Tiền mặt (két)
+o	Tiền ngân hàng (CK)
+•	Xem / lập / chốt báo cáo:
+o	Công nợ
+o	Tồn kho
+o	Lợi nhuận
+o	VAT
+KHÔNG ĐƯỢC
+•	Sửa số liệu đã chốt kỳ
+•	Can thiệp trực tiếp vào bảng tổng hợp
+________________________________________
+(3) NHÂN VIÊN ĐẶC BIỆT
+(Giai đoạn chuyển tiếp – đúng thực tế hiện tại)
+Bản chất
+•	Nhân viên kiêm nhiệm
+•	Quyền rộng hơn nhân viên thường
+•	Phục vụ vận hành khi chưa có kế toán riêng
+ĐƯỢC PHÉP
+•	Bán hàng
+•	Nhập hàng
+•	Lập chứng từ ở trạng thái NHÁP:
+o	Hóa đơn bán
+o	Hóa đơn nhập
+o	Phiếu thu
+o	Phiếu chi
+•	Thu tiền mặt
+•	Lập báo cáo ngày:
+o	Nhập – xuất – thu – chi
+o	Quỹ nhân viên cuối ngày
+KHÔNG ĐƯỢC
+•	Chốt hóa đơn
+•	Xác nhận chuyển khoản
+•	Chốt báo cáo
+•	Sửa số liệu đã xác nhận
+👉 Đây là vai trò “đệm”, khi có kế toán chuẩn → giảm quyền hoặc bỏ.
+________________________________________
+(4) NHÂN VIÊN (MÔ HÌNH CHUẨN SAU NÀY)
+Vai trò
+•	Thực hiện nghiệp vụ
+•	Không giữ quyền quyết định tài chính
+ĐƯỢC PHÉP
+•	Bán hàng
+•	Nhập hàng
+•	Thu – chi lặt vặt
+•	Lập báo cáo ngày của chính mình
+KHÔNG ĐƯỢC
+•	Lập hóa đơn chính thức
+•	Chốt chứng từ
+•	Xem báo cáo tài chính
+•	Ghi nhận VAT
+________________________________________
+(5) KẾ TOÁN ONLINE
+Bản chất
+•	Không tham gia vận hành nội bộ
+•	Chỉ phục vụ báo cáo thuế
+ĐƯỢC PHÉP
+•	Nhập hóa đơn VAT cân thuế
+•	Xem tổng VAT đầu ra (read-only)
+KHÔNG ĐƯỢC
+•	Chạm hóa đơn bán / nhập
+•	Chạm quỹ
+•	Chạm công nợ
+•	Chạm lợi nhuận
+👉 VAT cân thuế:
+•	Không gắn bán hàng
+•	Không tính doanh thu
+•	Không tính lợi nhuận
+________________________________________
+IV. TRẠNG THÁI CHỨNG TỪ (ÁP DỤNG CHUNG)
+1. Hóa đơn bán / nhập
+NHÁP
+  ↓
+ĐÃ XÁC NHẬN
+  ↓
+ĐÃ CHỐT
+  ↓
+(ĐIỀU CHỈNH BẰNG CHỨNG TỪ MỚI)
+Quyền chuyển
+•	NV / NV đặc biệt: NHÁP → ĐÃ XÁC NHẬN
+•	Kế toán / Admin: ĐÃ XÁC NHẬN → ĐÃ CHỐT
+________________________________________
+2. Phiếu thu – chi
+NHÁP → ĐÃ XÁC NHẬN
+________________________________________
+3. Hóa đơn VAT
+TẠO → ĐÃ GHI NHẬN THUẾ
+________________________________________
+V. QUY TẮC VAT & CHUYỂN KHOẢN
+QUY TẮC TỰ ĐỘNG
+•	Mọi hóa đơn:
+o	Nhập chuyển khoản
+o	Bán hàng chuyển khoản
+→ TỰ ĐỘNG SINH VAT
+Phân loại VAT
+•	VAT đầu vào → từ nhập hàng
+•	VAT đầu ra → từ bán hàng
+•	VAT cân thuế → kế toán online nhập
+________________________________________
+VI. QUỸ CÔNG TY – CHỐT Ở MỨC VẬN HÀNH
+QUỸ CÔNG TY
+├── TIỀN MẶT (KÉT)
+└── TIỀN NGÂN HÀNG (CK)
+Quyền
+•	Nhân viên / NV đặc biệt: KHÔNG chạm
+•	Kế toán: quản lý
+•	Admin: toàn quyền
+________________________________________
+VII. NGUYÊN TẮC KHÓA CUỐI (BẤT DI BẤT DỊCH)
+1.	Quyền gắn với VAI TRÒ, không gắn người
+2.	Nhân viên không tự chốt số
+3.	Chuyển khoản luôn qua kế toán
+4.	VAT sinh tự động theo dòng tiền CK
+5.	VAT cân thuế tách khỏi doanh thu
+6.	Chuẩn hoá từ từ, không bóp vận hành hiện tại
+________________________________________
+VIII. TÊN FILE CHUẨN (LƯU DÙNG LÂU DÀI)
+05_TRANG_THAI__PHAN_QUYEN__KIEM_SOAT_QUY_CTVT3__CHUAN.txt
+________________________________________
+

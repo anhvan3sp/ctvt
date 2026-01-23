@@ -1,0 +1,135 @@
+SƠ ĐỒ (3): KIẾN TRÚC DATABASE HỆ THỐNG CTVT3
+(Dựa trên Sơ đồ 1 + Sơ đồ 2 – Bản chuẩn triển khai)
+________________________________________
+I. MỤC ĐÍCH SƠ ĐỒ (3)
+Sơ đồ (3) trả lời 4 câu hỏi kỹ thuật cốt lõi:
+1. Hệ thống cần những bảng nào (CUỐI CÙNG)
+2. Bảng nào là GỐC – bảng nào là PHỤ
+3. Bảng nào được INSERT / UPDATE / KHÓA
+4. API được phép tác động đến bảng nào
+❗ Từ sơ đồ này trở đi:
+•	Không thêm bảng tùy hứng
+•	Không viết API “cho tiện”
+________________________________________
+II. PHÂN TẦNG DATABASE (THEO SƠ ĐỒ 2)
+CTVT3 DB chia thành 5 nhóm bảng rõ ràng:
+A. CORE_GIAO_DICH
+B. NHAT_KY_HE_QUA
+C. CHOT_BAO_CAO
+D. DANH_MUC
+H. HE_THONG
+________________________________________
+III. DANH SÁCH BẢNG CHUẨN THEO TỪNG NHÓM
+________________________________________
+A. CORE_GIAO_DICH (BẢNG GỐC – NGUỒN SỰ THẬT)
+🔒 Nguyên tắc: thiếu 1 bảng là sai nghiệp vụ
+hoa_don_ban
+hoa_don_ban_chi_tiet
+
+hoa_don_nhap
+hoa_don_nhap_chi_tiet
+
+thu_chi
+thu_ngan
+
+hoa_don_vat
+gas_du
+Quy tắc
+- INSERT là chính
+- UPDATE chỉ cho:
+  + trạng thái
+  + ghi chú
+- Không xóa cứng (chỉ hủy trạng thái)
+________________________________________
+B. NHAT_KY_HE_QUA (KHÔNG NHẬP TAY)
+nhat_ky_kho
+nhat_ky_vo
+👉 Tương lai CTVT3:
+log_chung_tu (đề xuất mới)
+Quy tắc
+- Chỉ sinh từ CORE_GIAO_DICH
+- Không API CRUD trực tiếp
+________________________________________
+C. CHOT_BAO_CAO (SNAPSHOT – ĐƯỢC XÓA)
+ton_kho_chot
+ton_kho_chot_ngay
+
+gas_du_chot
+gas_du_chot_ngay
+Quy tắc
+- Không INSERT tay
+- Không UPDATE
+- Có thể truncate và rebuild
+________________________________________
+D. DANH_MUC (MASTER DATA)
+khach_hang
+nha_cung_cap
+nhan_vien
+kho_hang
+san_pham
+nhan_vien_kho
+Quy tắc
+- CRUD có kiểm soát
+- Không chứa số dư
+________________________________________
+H. HE_THONG (KHÔNG LIÊN QUAN NGHIỆP VỤ)
+user
+user_role
+user_permission
+user_session
+
+phong_chat
+phong_chat_thanh_vien
+tin_nhan
+
+audit_log
+Quy tắc
+- Không JOIN với bảng CORE khi tính số
+- Chỉ kiểm soát truy cập
+________________________________________
+IV. NHỮNG BẢNG CẦN ĐIỀU CHỈNH TỪ CTVT2 → CTVT3
+1. GỘP / CHUẨN HÓA
+•	hoa_don_ban
+➜ thêm cột:
+•	trang_thai
+•	loai_hoa_don (ban_thuong / ban_kg / can_thue)
+•	hoa_don_vat
+➜ thêm:
+•	loai_phat_sinh (ban_hang / nhap_hang / can_thue)
+________________________________________
+2. TÁCH LOGIC RA KHỎI BẢNG
+❌ Không làm:
+cap_nhat_truc_tiep ton kho
+cap_nhat cong_no trong khach_hang
+✔ Thay bằng:
+- tính từ giao dịch
+- đối soát bằng nhật ký
+________________________________________
+3. BẢNG KHÔNG ĐƯỢC PHÉP UPDATE SỐ
+nhat_ky_kho
+nhat_ky_vo
+ton_kho_chot*
+gas_du_chot*
+________________________________________
+V. QUAN HỆ CHUẨN (DẠNG CHỮ – ĐỂ SẾP VẼ INKSCAPE)
+[DANH_MUC]
+   ↓
+[CORE_GIAO_DICH]
+   ↓
+[NHAT_KY_HE_QUA]
+   ↓
+[CHOT_BAO_CAO]
+
+[HE_THONG] bao ngoài – không chạm số
+________________________________________
+VI. NGUYÊN TẮC BẤT DI BẤT DỊCH CỦA SƠ ĐỒ (3)
+1. Mọi con số đều xuất phát từ CORE
+2. Không bảng nào vừa là gốc vừa là báo cáo
+3. Nhật ký chỉ ghi – không tính
+4. Chốt chỉ đọc – không sửa
+5. User / chat không liên quan kế toán
+________________________________________
+VII. TÊN FILE CHUẨN ĐỂ LƯU
+03_KIENTRUC_DATABASE_CTVT3__CHUAN.txt
+________________________________________
+

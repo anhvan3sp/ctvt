@@ -1,0 +1,87 @@
+modules/
+│
+├── README.md                   # HIẾN PHÁP NGHIỆP VỤ API
+│
+├── ban_gas/                    # BÁN GAS – NGHIỆP VỤ TRUNG TÂM
+│   ├── README.md
+│   ├── controllers/
+│   │   └── ban_gas_controller.py
+│   ├── services/
+│   │   └── ban_gas_service.py
+│   ├── commands/
+│   │   ├── tao_hoa_don_ban.py
+│   │   ├── them_chi_tiet_ban.py
+│   │   └── xac_nhan_hoa_don_ban.py
+│   ├── rules/
+│   │   ├── ban_gas_rules.py
+│   │   └── kiem_soat_thanh_toan.py
+│   └── events/
+│       └── hoa_don_ban_da_ghi_nhan.py
+│
+├── nhap_gas/                   # NHẬP GAS
+│   ├── README.md
+│   ├── controllers/
+│   │   └── nhap_gas_controller.py
+│   ├── services/
+│   │   └── nhap_gas_service.py
+│   ├── commands/
+│   │   ├── tao_hoa_don_nhap.py
+│   │   ├── them_chi_tiet_nhap.py
+│   │   └── xac_nhan_hoa_don_nhap.py
+│   ├── rules/
+│   │   └── nhap_gas_rules.py
+│   └── events/
+│       └── hoa_don_nhap_da_ghi_nhan.py
+│
+├── thu_chi/                    # THU – CHI
+│   ├── README.md
+│   ├── controllers/
+│   │   └── thu_chi_controller.py
+│   ├── services/
+│   │   └── thu_chi_service.py
+│   ├── commands/
+│   │   ├── ghi_nhan_phieu_thu.py
+│   │   └── ghi_nhan_phieu_chi.py
+│   ├── rules/
+│   │   └── thu_chi_rules.py
+│   └── events/
+│       ├── phieu_thu_da_ghi_nhan.py
+│       └── phieu_chi_da_ghi_nhan.py
+│
+├── thu_ngan/                   # THU NGÂN
+│   ├── README.md
+│   ├── controllers/
+│   │   └── thu_ngan_controller.py
+│   ├── services/
+│   │   └── thu_ngan_service.py
+│   ├── commands/
+│   │   └── ghi_nhan_nop_tien.py
+│   ├── rules/
+│   │   └── thu_ngan_rules.py
+│   └── events/
+│       └── nop_tien_nv_da_ghi_nhan.py
+│
+├── ke_toan/                    # KẾ TOÁN – VAT – CÂN THUẾ
+│   ├── README.md
+│   ├── controllers/
+│   │   └── ke_toan_controller.py
+│   ├── services/
+│   │   └── ke_toan_service.py
+│   ├── commands/
+│   │   └── tao_hoa_don_vat_can_thue.py
+│   ├── rules/
+│   │   └── ke_toan_rules.py
+│   └── events/
+│       └── hoa_don_vat_can_thue_da_ghi_nhan.py
+│
+└── bao_cao/                    # BÁO CÁO – READ ONLY
+    ├── README.md
+    ├── controllers/
+    │   └── bao_cao_controller.py
+    ├── readers/
+    │   ├── cong_no_reader.py
+    │   ├── ton_kho_reader.py
+    │   ├── loi_nhuan_reader.py
+    │   └── vat_reader.py
+    └── rules/
+        └── bao_cao_rules.py

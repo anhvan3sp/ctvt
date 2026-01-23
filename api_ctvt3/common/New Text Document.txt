@@ -1,0 +1,39 @@
+common/
+│
+├── README.md
+│
+├── exceptions/                 # LỖI CHUẨN HÓA
+│   ├── base_exception.py
+│   ├── business_exception.py
+│   ├── permission_exception.py
+│   └── validation_exception.py
+│
+├── constants/                  # HẰNG SỐ TOÀN HỆ
+│   ├── app_constants.py
+│   ├── datetime_constants.py
+│   └── pagination_constants.py
+│
+├── enums/                      # ENUM DÙNG CHUNG (KHÔNG NGHIỆP VỤ)
+│   ├── trang_thai_chung.py
+│   ├── loai_tien_te.py
+│   └── hinh_thuc_thanh_toan.py
+│
+├── utils/                      # HÀM TIỆN ÍCH THUẦN KỸ THUẬT
+│   ├── datetime_utils.py
+│   ├── string_utils.py
+│   ├── number_utils.py
+│   └── id_generator.py
+│
+├── validators/                 # VALIDATE KỸ THUẬT
+│   ├── base_validator.py
+│   ├── pagination_validator.py
+│   └── request_validator.py
+│
+├── decorators/                 # DECORATOR DÙNG CHUNG
+│   ├── require_permission.py
+│   ├── transactional.py
+│   └── audit_log.py
+│
+└── pagination/                 # PHÂN TRANG – SORT
+    ├── page_request.py
+    └── page_response.py

@@ -1,0 +1,37 @@
+core/
+│
+├── README.md
+│   # Giải thích core là gì, làm gì, không làm gì
+│
+├── entities/                 # THỰC THỂ NGHIỆP VỤ (đối tượng chính)
+│   ├── hoa_don_ban.py
+│   ├── hoa_don_ban_chi_tiet.py
+│   ├── hoa_don_nhap.py
+│   ├── hoa_don_nhap_chi_tiet.py
+│   ├── phieu_thu.py
+│   ├── phieu_chi.py
+│   ├── thu_ngan.py
+│   ├── hoa_don_vat.py
+│   └── gas_du.py
+│
+├── enums/                    # CÁC LOẠI – TRẠNG THÁI CỐ ĐỊNH
+│   ├── trang_thai_chung_tu.py      # nháp / đã chốt / huỷ
+│   ├── loai_thu_chi.py             # thu / chi
+│   ├── loai_vat.py                 # có VAT / không VAT
+│   └── hinh_thuc_thanh_toan.py      # tiền mặt / chuyển khoản
+│
+├── rules/                    # LUẬT NGHIỆP VỤ BẤT BIẾN
+│   ├── hoa_don_rules.py
+│   ├── thu_chi_rules.py
+│   └── thu_ngan_rules.py
+│
+├── value_objects/            # GIÁ TRỊ ĐẶC BIỆT (không phải số thường)
+│   ├── so_tien.py            # tiền, không cho âm nếu không cho phép
+│   ├── thoi_diem.py          # ngày giờ nghiệp vụ
+│   └── so_luong.py
+│
+└── events/                   # SỰ KIỆN NGHIỆP VỤ (chỉ mô tả)
+    ├── hoa_don_ban_da_chot.py
+    ├── hoa_don_nhap_da_chot.py
+    ├── phieu_thu_da_ghi_nhan.py
+    └── phieu_chi_da_ghi_nhan.py

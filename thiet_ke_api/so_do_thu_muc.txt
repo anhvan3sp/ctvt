@@ -1,0 +1,140 @@
+api_ctvt3/
+│
+├── docs/                         # TÀI LIỆU – NÃO BỘ HỆ THỐNG
+│   ├── 01_nghiep_vu/
+│   │   ├── so_do_1_nghiep_vu.md
+│   │   └── mo_ta_nghiep_vu_ctvt3.md
+│   │
+│   ├── 02_su_kien/
+│   │   └── danh_sach_su_kien_nghiep_vu.md
+│   │
+│   ├── 03_du_lieu/
+│   │   ├── so_do_2_phan_vai_du_lieu.md
+│   │   └── so_do_3_kien_truc_db.md
+│   │
+│   ├── 04_quy_tac/
+│   │   └── quy_tac_bat_bien.md
+│   │
+│   ├── 05_luong_xu_ly/
+│   │   └── luong_xu_ly_chuan.md
+│   │
+│   ├── 06_api_contract/
+│   │   ├── ban_gas.md
+│   │   ├── nhap_gas.md
+│   │   ├── thu_chi.md
+│   │   ├── thu_ngan.md
+│   │   ├── ke_toan.md
+│   │   └── bao_cao.md
+│   │
+│   ├── 07_kien_truc_code.md
+│   └── 08_trien_khai_test.md
+│
+├── core/                         # CORE TRANSACTION – NGUỒN SỰ THẬT
+│   ├── entities/                # Mapping bảng CORE (KHÔNG LOGIC)
+│   │   ├── HoaDonBan.py
+│   │   ├── HoaDonNhap.py
+│   │   ├── ThuChi.py
+│   │   ├── ThuNgan.py
+│   │   ├── HoaDonVAT.py
+│   │   └── GasDu.py
+│   │
+│   └── repositories/            # Truy DB CORE (CÂM – TRUNG LẬP)
+│       ├── hoa_don_ban_repo.py
+│       ├── hoa_don_nhap_repo.py
+│       ├── thu_chi_repo.py
+│       ├── thu_ngan_repo.py
+│       ├── hoa_don_vat_repo.py
+│       └── gas_du_repo.py
+│
+├── journal/                      # NHẬT KÝ – HỆ QUẢ (KHÔNG API)
+│   ├── entities/
+│   │   ├── NhatKyKho.py
+│   │   └── NhatKyVo.py
+│   │
+│   └── services/
+│       ├── sinh_nhat_ky_kho.py
+│       └── sinh_nhat_ky_vo.py
+│
+├── snapshot/                     # CHỐT / BÁO CÁO – READ ONLY
+│   ├── entities/
+│   │   ├── TonKhoChotNgay.py
+│   │   ├── GasDuChotNgay.py
+│   │   ├── QuyCongTyChotNgay.py
+│   │   └── QuyNhanVienChotNgay.py
+│   │
+│   ├── jobs/
+│   │   ├── chot_ton_kho_ngay.py
+│   │   ├── chot_gas_du_ngay.py
+│   │   ├── chot_quy_cong_ty_ngay.py
+│   │   └── chot_quy_nhan_vien_ngay.py
+│   │
+│   └── readers/
+│       ├── bao_cao_ton_kho.py
+│       ├── bao_cao_cong_no.py
+│       ├── bao_cao_loi_nhuan.py
+│       └── bao_cao_vat.py
+│
+├── master/                       # DANH MỤC – KHÔNG SINH SỐ
+│   ├── entities/
+│   │   ├── KhachHang.py
+│   │   ├── NhaCungCap.py
+│   │   ├── NhanVien.py
+│   │   ├── KhoHang.py
+│   │   └── SanPham.py
+│   │
+│   └── repositories/
+│       ├── khach_hang_repo.py
+│       ├── nha_cung_cap_repo.py
+│       ├── nhan_vien_repo.py
+│       ├── kho_hang_repo.py
+│       └── san_pham_repo.py
+│
+├── modules/                      # MODULE NGHIỆP VỤ (TRÁI TIM API)
+│   ├── ban_gas/
+│   │   ├── BanGasController.py
+│   │   ├── BanGasService.py
+│   │   └── rules.py
+│   │
+│   ├── nhap_gas/
+│   │   ├── NhapGasController.py
+│   │   ├── NhapGasService.py
+│   │   └── rules.py
+│   │
+│   ├── thu_chi/
+│   │   ├── ThuChiController.py
+│   │   ├── ThuChiService.py
+│   │   └── rules.py
+│   │
+│   ├── thu_ngan/
+│   │   ├── ThuNganController.py
+│   │   └── ThuNganService.py
+│   │
+│   ├── ke_toan/
+│   │   ├── CanThueController.py
+│   │   └── CanThueService.py
+│   │
+│   └── bao_cao/
+│       ├── BaoCaoController.py
+│       └── BaoCaoService.py
+│
+├── system/                       # HỆ THỐNG – BAO NGOÀI
+│   ├── auth/
+│   │   ├── AuthController.py
+│   │   └── AuthService.py
+│   │
+│   ├── chat/
+│   │   ├── ChatController.py
+│   │   └── ChatService.py
+│   │
+│   └── audit/
+│       └── audit_logger.py
+│
+├── common/                       # DÙNG CHUNG – KHÔNG NGHIỆP VỤ
+│   ├── exceptions.py
+│   ├── permissions.py
+│   ├── validators.py
+│   └── constants.py
+│
+├── main.py                       # ENTRY POINT
+├── config.py
+└── README.md

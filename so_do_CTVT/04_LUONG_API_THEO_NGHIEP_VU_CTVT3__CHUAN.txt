@@ -1,0 +1,183 @@
+SƠ ĐỒ (4): LUỒNG API THEO NGHIỆP VỤ – HỆ THỐNG CTVT3
+(Bản chuẩn triển khai – khóa logic hệ thống)
+________________________________________
+I. MỤC ĐÍCH SƠ ĐỒ (4)
+Sơ đồ (4) trả lời 5 câu hỏi sống còn:
+1. Mỗi nghiệp vụ gọi API nào
+2. API được phép ghi vào bảng nào
+3. API sinh ra những hệ quả gì
+4. API nào TUYỆT ĐỐI KHÔNG được sửa số
+5. Trình tự xử lý để không sai kế toán
+❗ Sau sơ đồ này:
+•	Không có API “tiện tay update”
+•	Không có chuyện “tính lại cho nhanh”
+________________________________________
+II. NGUYÊN TẮC CHUNG CỦA API CTVT3
+1. API chỉ phục vụ NGHIỆP VỤ (theo Sơ đồ 1)
+2. API chỉ ghi vào CORE_GIAO_DICH
+3. NHAT_KY và CHOT sinh TỰ ĐỘNG
+4. API đọc báo cáo KHÔNG ghi DB
+5. Không API nào được sửa số dư trực tiếp
+________________________________________
+III. LUỒNG API THEO TỪNG NGHIỆP VỤ
+________________________________________
+(1) QUẢN LÝ DANH MỤC
+API
+POST   /dm/khach-hang
+PUT    /dm/khach-hang/{id}
+
+POST   /dm/nha-cung-cap
+POST   /dm/nhan-vien
+POST   /dm/kho
+POST   /dm/san-pham
+Ghi DB
+khach_hang
+nha_cung_cap
+nhan_vien
+kho_hang
+san_pham
+nhan_vien_kho
+CẤM
+- Không ghi kho
+- Không ghi tiền
+- Không ghi công nợ
+________________________________________
+(2) NHẬP GAS
+API
+POST /nhap-gas/hoa-don
+POST /nhap-gas/hoa-don/{id}/chi-tiet
+POST /nhap-gas/{id}/xac-nhan
+Ghi DB (CORE)
+hoa_don_nhap
+hoa_don_nhap_chi_tiet
+hoa_don_vat (nếu có)
+Sinh tự động
+nhat_ky_kho (nhap)
+nhat_ky_vo (nếu có)
+Ảnh hưởng
+- Tăng tồn kho (tính sau)
+- Phát sinh công nợ NCC
+- Giảm quỹ (nếu thanh toán)
+________________________________________
+(3) BÁN GAS ⭐
+API
+POST /ban-gas/hoa-don
+POST /ban-gas/hoa-don/{id}/chi-tiet
+POST /ban-gas/{id}/xac-nhan
+Ghi DB
+hoa_don_ban
+hoa_don_ban_chi_tiet
+gas_du (nếu bán kg)
+hoa_don_vat (nếu có)
+Sinh tự động
+nhat_ky_kho (xuat)
+nhat_ky_vo
+Ảnh hưởng
+- Giảm tồn kho
+- Tăng tiền (NV / công ty)
+- Phát sinh công nợ khách
+- Phát sinh VAT đầu ra
+________________________________________
+(4) THU – CHI PHÁT SINH
+API
+POST /thu-chi/thu
+POST /thu-chi/chi
+Ghi DB
+thu_chi
+hoa_don_vat (nếu có)
+Ảnh hưởng
+- Quỹ nhân viên
+- Quỹ công ty
+- Có thể liên quan công nợ
+________________________________________
+(5) THU NGÂN (NV NỘP TIỀN)
+API
+POST /thu-ngan/nop-tien
+Ghi DB
+thu_ngan
+Ảnh hưởng
+- Giảm quỹ NV
+- Tăng quỹ công ty
+❗ Không sinh doanh thu.
+________________________________________
+(6) ĐẶT HÀNG
+(6.1) Khách đặt trước
+API
+POST /dat-hang/khach
+Ghi DB
+thu_chi (thu)
+hoa_don_vat (nếu có)
+________________________________________
+(6.2) Đặt NCC
+API
+POST /dat-hang/ncc
+Ghi DB
+thu_chi (chi)
+hoa_don_vat (nếu có)
+________________________________________
+(7) QUẢN LÝ TỔNG HỢP – ĐỐI SOÁT
+API
+GET /bao-cao/cong-no
+GET /bao-cao/ton-kho
+GET /bao-cao/loi-nhuan
+DB
+READ ONLY
+❌ CẤM
+INSERT / UPDATE / DELETE
+________________________________________
+(8) KẾ TOÁN DỊCH VỤ – CÂN THUẾ VAT
+API
+POST /ke-toan/can-thue
+Ghi DB
+hoa_don_vat (loai = can_thue)
+Ảnh hưởng
+- Phát sinh VAT phải nộp
+- Không ảnh hưởng kho
+- Không ảnh hưởng lợi nhuận NV
+________________________________________
+IV. API HỆ THỐNG (LỚP H)
+API
+POST /auth/login
+POST /auth/logout
+GET  /auth/me
+
+POST /chat/phong
+POST /chat/tin-nhan
+Ghi DB
+user
+user_session
+phong_chat
+tin_nhan
+audit_log
+❗ KHÔNG JOIN – KHÔNG TÍNH SỐ
+________________________________________
+V. NHỮNG API BỊ CẤM TUYỆT ĐỐI
+PUT /ton-kho
+PUT /cong-no
+PUT /quy
+PUT /bao-cao/*
+👉 Nếu cần điều chỉnh → tạo chứng từ mới.
+________________________________________
+VI. LUỒNG TỔNG QUÁT (DẠNG CHỮ – ĐỂ VẼ)
+[API nghiệp vụ]
+        ↓
+[CORE_GIAO_DICH]
+        ↓
+[Service sinh hệ quả]
+        ↓
+[NHAT_KY]
+        ↓
+[JOB chốt kỳ]
+        ↓
+[BAO_CAO]
+________________________________________
+VII. NGUYÊN TẮC KHÓA CUỐI CÙNG
+1. API không tính – chỉ ghi sự kiện
+2. Số liệu luôn tính từ CORE
+3. Báo cáo không được ghi
+4. Điều chỉnh = chứng từ mới
+5. Dev không có quyền sửa số
+________________________________________
+VIII. TÊN FILE CHUẨN
+04_LUONG_API_THEO_NGHIEP_VU_CTVT3__CHUAN.txt
+

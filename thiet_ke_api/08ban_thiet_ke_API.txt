@@ -1,0 +1,157 @@
+BƯỚC 8 – VIẾT CODE & TEST THEO NGHIỆP VỤ
+
+(IMPLEMENTATION & BUSINESS-DRIVEN TESTING)
+
+Mục tiêu của Bước 8:
+Chỉ cho phép viết code khi mọi thứ đã bị khóa
+→ code không còn là nơi sáng tác, mà là nơi thi hành.
+
+1. ĐIỀU KIỆN ĐƯỢC PHÉP VIẾT CODE
+
+Chỉ được sang Bước 8 khi 7 điều kiện sau đều đạt:
+
+Nghiệp vụ đã khóa (Bước 1)
+
+Sự kiện đã xác định (Bước 2)
+
+Vai dữ liệu đã phân rõ (Bước 3)
+
+Quy tắc bất biến đã chốt (Bước 4)
+
+Luồng xử lý đã cố định (Bước 5)
+
+API contract đã duyệt (Bước 6)
+
+Kiến trúc code đã thống nhất (Bước 7)
+
+👉 Thiếu 1 điều → cấm code.
+
+2. NGUYÊN TẮC VIẾT CODE Ở BƯỚC 8
+2.1. CODE KHÔNG ĐƯỢC SÁNG TẠO
+
+Không thêm nghiệp vụ mới
+
+Không “linh hoạt xử lý”
+
+Không “fix cho chạy”
+
+👉 Code chỉ là bản dịch của contract.
+
+2.2. VIẾT THEO SỰ KIỆN – KHÔNG THEO CRUD
+
+Mỗi đoạn code phải trả lời được:
+
+Đang xử lý sự kiện nào
+
+Đang ở bước mấy trong luồng xử lý
+
+❌ Không có “save all”, “update anything”.
+
+3. TRÌNH TỰ VIẾT CODE CHUẨN
+THỨ TỰ BẮT BUỘC
+
+Viết Service trước
+
+Viết Repository hỗ trợ service
+
+Viết Controller sau cùng
+
+Viết Job / hậu xử lý
+
+Viết API đọc / báo cáo
+
+👉 Viết ngược thứ tự → dễ sai luật.
+
+4. TEST THEO NGHIỆP VỤ (KHÔNG THEO HÀM)
+4.1. TEST PHẢI DỰA TRÊN ĐỜI THẬT
+
+Mỗi test case phải mô tả được:
+
+Ai làm?
+
+Làm gì?
+
+Trong trạng thái nào?
+
+Kết quả mong đợi là gì?
+
+❌ Không test kiểu “truyền đúng thì pass”.
+
+4.2. 4 NHÓM TEST BẮT BUỘC
+
+Happy path
+→ làm đúng, dữ liệu hợp lệ
+
+Sai trạng thái
+→ nháp / đã chốt / đã hủy
+
+Sai quyền
+→ nhân viên làm việc của kế toán
+
+Vi phạm luật bất biến
+→ thử sửa số, thử tính ngược
+
+👉 Test này để bắt dev, không phải bắt máy.
+
+5. TEST LỊCH SỬ & TRUY VẾT
+
+Sau test phải kiểm tra:
+
+CORE có đúng không
+
+JOURNAL có sinh đủ không
+
+SNAPSHOT có bị chạm không
+
+👉 Nếu test làm thay đổi snapshot → code sai.
+
+6. KHÔNG TEST = CHƯA HOÀN THÀNH
+
+API chạy được ≠ API đúng
+
+Không test luật = hệ thống sớm muộn cũng hỏng
+
+👉 Bước 8 chưa xong nếu chưa test đủ nghiệp vụ.
+
+7. NGUYÊN TẮC TRIỂN KHAI & BÀN GIAO
+
+Trước khi đưa vào dùng:
+
+Đối soát 1–2 ngày thật
+
+So số:
+
+kho
+
+tiền
+
+công nợ
+
+Không “chạy luôn”
+
+👉 Triển khai cũng là một dạng test.
+
+8. TUYÊN BỐ KHÓA CUỐI CÙNG (RẤT QUAN TRỌNG)
+
+Từ sau Bước 8:
+
+❌ Không sửa số bằng tay
+
+❌ Không chỉnh DB để “cho khớp”
+
+❌ Mọi sai lệch → quay về chứng từ
+
+👉 Hệ thống sống hay chết là ở đây.
+
+9. TÓM TẮT TOÀN BỘ QUY TRÌNH 8 BƯỚC
+1. Hiểu nghiệp vụ
+2. Xác định sự kiện
+3. Phân vai dữ liệu
+4. Chốt luật bất biến
+5. Thiết kế luồng xử lý
+6. Chốt API contract
+7. Tổ chức kiến trúc code
+8. Viết code & test nghiệp vụ
+
+
+👉 Đây là chuẩn làm API dùng cho cả đời, không riêng CTVT3.

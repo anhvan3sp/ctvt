@@ -1,0 +1,89 @@
+Prompt Ctvt3
+PROMPT DỰ ÁN CTVT3
+I. MÔ TẢ DỰ ÁN
+CTVT3 là phần mềm quản lý vận hành cho công ty CTVT (kinh doanh gas). Mục tiêu chính là đảm bảo công ty vận hành được hằng ngày, số liệu đúng, không rối, không gian lận, có thể mở rộng về sau mà không phải đập lại hệ thống.
+Hệ thống phục vụ hai nhóm chính:
+•	Nhân viên: nhập liệu nghiệp vụ thực tế
+•	Admin (sếp): quản lý, kiểm soát, đối soát toàn bộ số liệu
+________________________________________
+II. MỤC TIÊU PHẦN MỀM
+•	Tạo phần mềm phục vụ trực tiếp cho công ty CTVT
+•	Đáp ứng đầy đủ nhu cầu vận hành thực tế
+•	Nhân viên sử dụng app để tạo:
+o	Hóa đơn nhập
+o	Hóa đơn bán
+o	Phiếu thu – chi
+o	Phiếu thu ngân
+o	Phiếu nhận đặt hàng khách
+•	Admin quản lý được:
+o	Dữ liệu toàn hệ thống
+o	Số dư quỹ công ty
+o	Số dư quỹ nhân viên
+o	Công nợ khách hàng
+o	Công nợ nhà cung cấp
+________________________________________
+III. PHẠM VI GIAI ĐOẠN 1
+•	Chỉ thực hiện BACKEND + API cho dự án CTVT3
+•	Thư mục gốc dự án API: apiCTVT3
+•	Chưa làm mobile app, UI chi tiết
+•	Chat nội bộ chỉ ở mức đơn giản (đã có bảng, chưa tối ưu)
+•	Chưa tối ưu hiệu năng nâng cao
+________________________________________
+IV. NỀN TẢNG THIẾT KẾ (ĐÃ CHỐT – KHÔNG ĐƯỢC PHÁ)
+Dự án CTVT3 được xây dựng dựa trên 5 sơ đồ đã chốt:
+1.	Sơ đồ 1 – Nghiệp vụ
+o	Mô tả các hoạt động thực tế của công ty
+o	Trả lời: công ty làm gì, tạo ra gì, ảnh hưởng đến đâu
+2.	Sơ đồ 2 – Dữ liệu
+o	2A: Giao dịch gốc (hóa đơn, thu chi…)
+o	2B: Ghi nhận hệ quả (nhật ký, công nợ, tồn kho…)
+o	2C: Tổng hợp / báo cáo
+o	2D: Danh mục (master data)
+o	2H: Hệ thống (user, quyền, chat)
+3.	Sơ đồ 3 – Luồng dữ liệu
+o	Dữ liệu đi từ nghiệp vụ → chứng từ → ghi nhận → snapshot
+4.	Sơ đồ 4 – Snapshot / Chốt số
+o	Chốt quỹ ngày
+o	Chốt tồn kho ngày
+o	Chốt gas dư ngày
+o	Snapshot chỉ là ảnh chụp, có thể xoá & build lại
+5.	Sơ đồ 5 – Trạng thái – Phân quyền – Kiểm soát
+o	Quyền theo vai trò (admin, kế toán, nhân viên…)
+o	Trạng thái chứng từ
+o	Khoá dòng tiền và VAT
+________________________________________
+V. NGUYÊN TẮC BẤT DI BẤT DỊCH
+1.	Mọi giao dịch đều bắt nguồn từ nghiệp vụ thực tế
+2.	Mọi nghiệp vụ đều phải tạo chứng từ
+3.	Chỉ chứng từ hợp lệ mới ảnh hưởng số liệu
+4.	Không bảng hay API nào được tự ý sửa số dư
+5.	Báo cáo và snapshot không phải nguồn sự thật
+6.	Snapshot chỉ để đọc nhanh, không được tính ngược
+7.	VAT cân thuế tách khỏi doanh thu
+8.	Nhân viên không được tự chốt số
+________________________________________
+VI. NHỮNG ĐIỀU KHÔNG ĐƯỢC PHÉP (ÁP DỤNG KHI LÀM VIỆC VỚI AI)
+•	Mọi thuật ngữ tiếng Anh phải giải thích bằng tiếng Việt
+•	Không được đưa tiếng Anh mà không giải nghĩa
+•	Không viết dài lan man khi chưa được yêu cầu
+•	Không viết code khi chưa đủ tư liệu
+•	Không viết code kiểu chắp vá
+o	Nếu sửa: phải sửa thành 1 file hoàn chỉnh
+•	Không tự ý thay đổi cấu trúc làm hỏng dự án
+•	Không tự mở rộng phạm vi khi chưa được sếp cho phép
+________________________________________
+VII. QUY ƯỚC LÀM API
+•	API bám sát DB ctvt3 đã chốt
+•	API không chứa logic phá nguyên tắc snapshot
+•	API không tính ngược từ báo cáo
+•	Mọi endpoint phải rõ:
+o	Là nghiệp vụ gì
+o	Tạo / đọc / xác nhận cái gì
+o	Ảnh hưởng bảng nào
+________________________________________
+VIII. CÁCH SỬ DỤNG PROMPT NÀY
+•	Dán toàn bộ nội dung file này vào đầu mỗi phiên làm việc quan trọng
+•	Mọi thiết kế API phải tuân theo nội dung trong file
+•	Khi dự án tạm dừng dài ngày, dùng file này để khôi phục tư duy
+________________________________________
+PROMPT_CTVT3.md – HIẾN PHÁP DỰ ÁN Không được phá, chỉ được mở rộng khi có quyết định rõ ràng từ sếp.

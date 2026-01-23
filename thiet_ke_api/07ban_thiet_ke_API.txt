@@ -1,0 +1,226 @@
+BƯỚC 7 – TỔ CHỨC KIẾN TRÚC CODE
+
+(CODE ARCHITECTURE – GIỮ HỆ THỐNG KHÔNG NÁT)
+
+Mục tiêu của Bước 7:
+Quy định code phải được tổ chức như thế nào để không phá nghiệp vụ, không phá luật, không phá dữ liệu
+→ dev chỉ được “đi trong khung”, không được sáng tác.
+
+1. TƯ DUY GỐC CỦA BƯỚC 7
+
+Code không được quyết định nghiệp vụ
+
+Code chỉ thi hành những gì đã khóa ở Bước 1–6
+
+Kiến trúc code phải:
+
+dễ đọc
+
+dễ kiểm tra
+
+khó phá
+
+👉 Bước 7 là khóa tay dev bằng cấu trúc, không bằng lời nói.
+
+2. NGUYÊN TẮC TỔ CHỨC CODE BẤT DI BẤT DỊCH
+
+Nghiệp vụ không nằm trong Controller
+
+Luật không nằm trong DB
+
+Tính toán không nằm trong API
+
+Báo cáo không nằm trong Service ghi
+
+Không có “chỗ tiện” để nhét logic
+
+👉 Nếu thấy code vi phạm 1 trong 5 điều trên → thiết kế sai.
+
+3. PHÂN TẦNG KIẾN TRÚC CHUẨN (KHÔNG PHẢI FRAMEWORK)
+TẦNG 1 – CONTROLLER (CỬA VÀO)
+
+Vai trò
+
+Nhận request
+
+Validate hình thức (đủ field, đúng kiểu)
+
+Gọi service
+
+KHÔNG ĐƯỢC
+
+Không viết nghiệp vụ
+
+Không kiểm tra luật kế toán
+
+Không truy DB trực tiếp
+
+👉 Controller ngu – mỏng – dễ thay.
+
+TẦNG 2 – SERVICE (TRÁI TIM NGHIỆP VỤ)
+
+Vai trò
+
+Thực thi sự kiện nghiệp vụ
+
+Kiểm tra:
+
+quyền
+
+trạng thái
+
+luật bất biến (Bước 4)
+
+Quyết định:
+
+ghi hay không ghi CORE
+
+ĐƯỢC PHÉP
+
+Điều phối nhiều repository
+
+Gọi module sinh hệ quả
+
+👉 Service là nơi sếp kiểm tra logic, không phải controller.
+
+TẦNG 3 – DOMAIN / BUSINESS LOGIC (NẾU TÁCH)
+
+(áp dụng khi hệ thống lớn dần)
+
+Vai trò
+
+Đóng gói:
+
+quy tắc nghiệp vụ
+
+kiểm tra phức tạp
+
+Để service không phình to
+
+👉 Domain không biết API, không biết DB.
+
+TẦNG 4 – REPOSITORY / DATA ACCESS
+
+Vai trò
+
+Truy cập DB
+
+Thực hiện CRUD đúng vai dữ liệu (Bước 3)
+
+KHÔNG ĐƯỢC
+
+Không quyết định nghiệp vụ
+
+Không tính toán
+
+Không join báo cáo
+
+👉 Repository câm – trung lập – có thể thay DB.
+
+TẦNG 5 – MODULE HỆ QUẢ / HẬU XỬ LÝ
+
+Vai trò
+
+Sinh:
+
+nhật ký
+
+VAT
+
+dữ liệu đối soát
+
+Nhận input chỉ từ CORE
+
+👉 Tầng này không có API riêng.
+
+4. QUY ƯỚC TỔ CHỨC THEO NGHIỆP VỤ (RẤT QUAN TRỌNG)
+
+❌ Sai (theo bảng):
+
+HoaDonController
+ThuChiController
+
+
+✅ Đúng (theo nghiệp vụ):
+
+BanGas/
+  BanGasController
+  BanGasService
+
+NhapGas/
+  NhapGasService
+
+ThuChi/
+  ThuChiService
+
+
+👉 1 nghiệp vụ = 1 module, không trộn.
+
+5. QUẢN LÝ TRẠNG THÁI TRONG CODE
+
+Trạng thái chỉ đổi ở Service
+
+Repository không biết trạng thái có hợp lệ hay không
+
+Controller không cho nhảy trạng thái
+
+👉 Trạng thái = luật, không phải field thường.
+
+6. QUẢN LÝ LỖI (ERROR HANDLING)
+
+Phải phân biệt rõ:
+
+Lỗi nghiệp vụ (vi phạm luật)
+
+Lỗi quyền
+
+Lỗi dữ liệu
+
+Lỗi hệ thống
+
+❌ Không trả lỗi chung chung
+✅ Lỗi phải để đối soát – audit – debug
+
+7. VỊ TRÍ CỦA BÁO CÁO TRONG KIẾN TRÚC
+
+Báo cáo = module riêng
+
+Chỉ đọc:
+
+CORE
+
+JOURNAL
+
+SNAPSHOT
+
+Không gọi service ghi
+
+👉 Cấm báo cáo gọi API ghi ngược lại.
+
+8. KẾT QUẢ PHẢI ĐẠT SAU BƯỚC 7
+
+Sau bước này:
+
+Dev mới vào không dám code bừa
+
+Thay framework không đụng nghiệp vụ
+
+Sếp nhìn cấu trúc thư mục là biết:
+
+đúng hay sai
+
+thiếu hay thừa
+
+👉 Kiến trúc đúng = hệ thống tự bảo vệ.
+
+9. TUYÊN BỐ KHÓA BƯỚC 7
+
+Từ sau Bước 7:
+
+❌ Không nhét logic vào controller
+
+❌ Không gọi DB ngoài repository
+
+❌ Không viết “service dùng chung cho mọi thứ”
+
+👉 Code phải phục vụ nghiệp vụ, không phải ngược lại.

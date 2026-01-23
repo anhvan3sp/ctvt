@@ -1,0 +1,75 @@
+system/
+│
+├── README.md
+│
+├── auth/                       # XÁC THỰC – PHIÊN LÀM VIỆC
+│   ├── controllers/
+│   │   ├── login_controller.py
+│   │   └── logout_controller.py
+│   │
+│   ├── services/
+│   │   ├── auth_service.py
+│   │   └── session_service.py
+│   │
+│   ├── repositories/
+│   │   ├── user_repo.py
+│   │   └── session_repo.py
+│   │
+│   ├── entities/
+│   │   ├── user.py
+│   │   └── user_session.py
+│   │
+│   └── enums/
+│       ├── trang_thai_user.py
+│       └── loai_phien.py
+│
+├── permission/                 # PHÂN QUYỀN – ROLE – POLICY
+│   ├── services/
+│   │   ├── role_service.py
+│   │   └── permission_service.py
+│   │
+│   ├── repositories/
+│   │   ├── role_repo.py
+│   │   └── permission_repo.py
+│   │
+│   ├── entities/
+│   │   ├── role.py
+│   │   ├── permission.py
+│   │   └── role_permission.py
+│   │
+│   └── policies/
+│       ├── ban_gas_policy.py
+│       ├── nhap_gas_policy.py
+│       └── ke_toan_policy.py
+│
+├── audit/                      # LOG KIỂM TOÁN – TRUY VẾT
+│   ├── entities/
+│   │   └── audit_log.py
+│   │
+│   ├── writers/
+│   │   └── audit_writer.py
+│   │
+│   └── enums/
+│       ├── loai_hanh_dong.py
+│       └── doi_tuong_tac_dong.py
+│
+├── chat/                       # CHAT NỘI BỘ (KHÔNG NGHIỆP VỤ)
+│   ├── controllers/
+│   │   ├── phong_chat_controller.py
+│   │   └── tin_nhan_controller.py
+│   │
+│   ├── services/
+│   │   ├── phong_chat_service.py
+│   │   └── tin_nhan_service.py
+│   │
+│   ├── repositories/
+│   │   ├── phong_chat_repo.py
+│   │   └── tin_nhan_repo.py
+│   │
+│   └── entities/
+│       ├── phong_chat.py
+│       └── tin_nhan.py
+│
+└── enums/                      # Enum CHUNG CHO SYSTEM
+    ├── trang_thai_phien.py
+    └── loai_he_thong.py

@@ -1,0 +1,31 @@
+snapshot/
+│
+├── README.md
+│
+├── entities/                    # Mapping bảng CHOT_BAO_CAO
+│   ├── ton_kho_chot_ngay.py
+│   ├── gas_du_chot_ngay.py
+│   ├── quy_cong_ty_chot_ngay.py
+│   └── quy_nhan_vien_chot_ngay.py
+│
+├── builders/                    # DỰNG SNAPSHOT TỪ CORE + JOURNAL
+│   ├── ton_kho_builder.py
+│   ├── gas_du_builder.py
+│   ├── quy_cong_ty_builder.py
+│   └── quy_nhan_vien_builder.py
+│
+├── jobs/                        # JOB CHỐT ĐỊNH KỲ (CRON / EVENT)
+│   ├── chot_ton_kho_ngay.py
+│   ├── chot_gas_du_ngay.py
+│   ├── chot_quy_cong_ty_ngay.py
+│   └── chot_quy_nhan_vien_ngay.py
+│
+├── readers/                     # ĐỌC SNAPSHOT – READ ONLY
+│   ├── ton_kho_reader.py
+│   ├── gas_du_reader.py
+│   ├── quy_cong_ty_reader.py
+│   └── quy_nhan_vien_reader.py
+│
+└── enums/                       # Enum RIÊNG CHO SNAPSHOT (NẾU CẦN)
+    ├── loai_snapshot.py
+    └── ky_chot.py

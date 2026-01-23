@@ -1,0 +1,39 @@
+master/
+│
+├── README.md
+│
+├── entities/                    # Mapping bảng DANH_MUC
+│   ├── khach_hang.py
+│   ├── nha_cung_cap.py
+│   ├── nhan_vien.py
+│   ├── kho_hang.py
+│   ├── san_pham.py
+│   └── nhan_vien_kho.py
+│
+├── repositories/                # CRUD DB thuần – KHÔNG LOGIC
+│   ├── khach_hang_repo.py
+│   ├── nha_cung_cap_repo.py
+│   ├── nhan_vien_repo.py
+│   ├── kho_hang_repo.py
+│   ├── san_pham_repo.py
+│   └── nhan_vien_kho_repo.py
+│
+├── validators/                  # Kiểm tra dữ liệu đầu vào
+│   ├── khach_hang_validator.py
+│   ├── nha_cung_cap_validator.py
+│   ├── nhan_vien_validator.py
+│   ├── kho_hang_validator.py
+│   └── san_pham_validator.py
+│
+├── services/                    # QUẢN LÝ DANH MỤC (KHÔNG NGHIỆP VỤ)
+│   ├── khach_hang_service.py
+│   ├── nha_cung_cap_service.py
+│   ├── nhan_vien_service.py
+│   ├── kho_hang_service.py
+│   └── san_pham_service.py
+│
+└── enums/                       # Enum RIÊNG CHO MASTER
+    ├── loai_san_pham.py
+    ├── don_vi_tinh.py
+    ├── trang_thai_doi_tuong.py
+    └── loai_khach_hang.py

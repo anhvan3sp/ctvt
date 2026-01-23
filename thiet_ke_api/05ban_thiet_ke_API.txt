@@ -1,0 +1,120 @@
+BƯỚC 5 – THIẾT KẾ LUỒNG XỬ LÝ CHUẨN
+(PROCESS FLOW – BIẾN LUẬT THÀNH HÀNH ĐỘNG)
+Mục tiêu của Bước 5:
+Quy định rõ hệ thống phải làm gì, theo thứ tự nào, khi một sự kiện xảy ra
+→ để API sau này không được phép làm sai trình tự.
+________________________________________
+1. TƯ DUY GỐC CỦA BƯỚC 5
+•	API không được tự quyết cách làm.
+•	Trình tự xử lý phải được chốt trước.
+•	Sai thứ tự = sai số, dù công thức đúng.
+👉 Bước 5 là “đường ray” của hệ thống.
+________________________________________
+2. LUỒNG XỬ LÝ TỔNG QUÁT (ÁP DỤNG MỌI SỰ KIỆN)
+Mọi sự kiện nghiệp vụ trong CTVT3 đều phải đi qua 8 bước sau, không thiếu, không đảo:
+(1) Nhận yêu cầu
+(2) Xác thực người dùng
+(3) Kiểm tra vai trò / quyền
+(4) Kiểm tra trạng thái chứng từ
+(5) Kiểm tra điều kiện nghiệp vụ
+(6) Ghi dữ liệu CORE
+(7) Sinh hệ quả tự động
+(8) Ghi log / audit
+👉 Không có bước (6) thì không có số.
+👉 Không có bước (7) thì hệ thống mù đối soát.
+________________________________________
+3. DIỄN GIẢI TỪNG BƯỚC (KHÓA HÀNH VI API)
+(1) NHẬN YÊU CẦU
+•	Nhận đúng 1 sự kiện
+•	Không gộp nhiều hành động
+❌ Không nhận “làm tất cả”
+________________________________________
+(2) XÁC THỰC NGƯỜI DÙNG
+•	Người dùng phải tồn tại
+•	Phiên làm việc hợp lệ
+❌ Không có session → dừng
+________________________________________
+(3) KIỂM TRA VAI TRÒ / QUYỀN
+•	So vai trò với Sơ đồ 5
+•	Không xét theo “người quen”
+❌ Sai vai → dừng
+________________________________________
+(4) KIỂM TRA TRẠNG THÁI
+•	Trạng thái hiện tại có cho phép sự kiện này không?
+Ví dụ:
+•	nháp → được xác nhận
+•	đã chốt → cấm sửa
+❌ Sai trạng thái → dừng
+________________________________________
+(5) KIỂM TRA ĐIỀU KIỆN NGHIỆP VỤ
+•	Dữ liệu đầu vào hợp lệ?
+•	Có vi phạm quy tắc bất biến không?
+Ví dụ:
+•	hóa đơn chỉ tiền → không được có chi tiết hàng
+•	thu ngân → không được sinh doanh thu
+❌ Vi phạm luật → dừng
+________________________________________
+(6) GHI DỮ LIỆU CORE (TRUNG TÂM)
+•	Ghi sự kiện đã xảy ra
+•	INSERT là chính
+•	UPDATE chỉ cho trạng thái
+👉 Đây là bước DUY NHẤT sinh số.
+________________________________________
+(7) SINH HỆ QUẢ TỰ ĐỘNG
+•	Từ CORE sinh:
+o	nhật ký kho
+o	nhật ký vỏ
+o	VAT
+o	dữ liệu đối soát
+❌ Không API nào được gọi trực tiếp bước này.
+________________________________________
+(8) GHI LOG / AUDIT
+•	Ai làm
+•	Làm lúc nào
+•	Trên chứng từ nào
+•	Trước / sau ra sao
+👉 Admin cũng không được miễn log.
+________________________________________
+4. LUỒNG RIÊNG THEO NHÓM SỰ KIỆN
+A. LUỒNG “XÁC NHẬN CHỨNG TỪ”
+•	Là điểm nổ số
+•	Bắt buộc đủ 8 bước
+•	Không rollback hậu quả bằng update
+________________________________________
+B. LUỒNG “THU – CHI TIỀN”
+•	Không đụng kho
+•	Chỉ đụng quỹ
+•	Có thể liên quan công nợ (gián tiếp)
+________________________________________
+C. LUỒNG “CHỐT KỲ / SNAPSHOT”
+•	Không phải nghiệp vụ
+•	Không sinh số mới
+•	Chỉ đọc CORE + JOURNAL
+________________________________________
+5. NHỮNG THỨ TUYỆT ĐỐI KHÔNG NẰM TRONG LUỒNG
+❌ Tính lại số dư
+❌ Sửa snapshot
+❌ Update công nợ
+❌ Đồng bộ “cho đúng số”
+👉 Nếu thấy xuất hiện → vi phạm Bước 5.
+________________________________________
+6. KẾT QUẢ PHẢI ĐẠT SAU BƯỚC 5
+Sau bước này, sếp phải:
+•	Vẽ được sơ đồ luồng cho mọi nghiệp vụ
+•	Chỉ cần nhìn API là biết đang ở bước mấy
+•	Phát hiện ngay API “đi tắt”
+👉 API chỉ được đi trên đường ray này.
+________________________________________
+7. TUYÊN BỐ KHÓA BƯỚC 5
+Từ sau Bước 5:
+•	❌ Không API nào bỏ qua bước kiểm tra
+•	❌ Không ghi CORE nếu chưa qua đủ luồng
+•	❌ Không sinh hệ quả bằng tay
+👉 Trình tự đúng = hệ thống sống lâu.
+________________________________________
+Chốt tiến độ:
+•	Bước 1: Khóa nghiệp vụ
+•	Bước 2: Khóa thời điểm sinh số
+•	Bước 3: Khóa vai dữ liệu
+•	Bước 4: Khóa luật bất biến
+•	Bước 5: Khóa trình tự xử lý

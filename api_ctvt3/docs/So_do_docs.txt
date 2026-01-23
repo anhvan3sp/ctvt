@@ -1,0 +1,34 @@
+docs/
+├── 00_prompt/
+│   └── PROMPT_CTVT3.md
+│
+├── 01_nghiep_vu/
+│   ├── so_do_1_nghiep_vu.md
+│   └── mo_ta_nghiep_vu_ctvt3.md
+│
+├── 02_su_kien/
+│   └── danh_sach_su_kien_nghiep_vu.md
+│
+├── 03_du_lieu/
+│   ├── so_do_2_phan_vai_du_lieu.md
+│   └── so_do_3_kien_truc_db.md
+│
+├── 04_quy_tac/
+│   └── quy_tac_bat_bien.md
+│
+├── 05_luong_xu_ly/
+│   └── luong_xu_ly_chuan.md
+│
+├── 06_api_contract/
+│   ├── ban_gas.md
+│   ├── nhap_gas.md
+│   ├── thu_chi.md
+│   ├── thu_ngan.md
+│   ├── ke_toan.md
+│   └── bao_cao.md
+│
+├── 07_kien_truc_code/
+│   └── kien_truc_api.md
+│
+└── 08_trien_khai_test/
+    └── quy_trinh_test.md

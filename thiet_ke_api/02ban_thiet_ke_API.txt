@@ -1,0 +1,109 @@
+BƯỚC 2 – XÁC ĐỊNH SỰ KIỆN NGHIỆP VỤ
+(BUSINESS EVENT DEFINITION – KHÓA NGUỒN PHÁT SINH SỐ)
+Mục tiêu của Bước 2:
+Xác định chính xác NHỮNG KHOẢNH KHẮC nào trong đời thật được phép làm thay đổi số liệu
+→ để từ bước này trở đi không còn API “cập nhật cho tiện”.
+________________________________________
+1. KHÁI NIỆM CỐT LÕI CỦA BƯỚC 2
+1.1. SỰ KIỆN NGHIỆP VỤ LÀ GÌ?
+Sự kiện nghiệp vụ là:
+•	Một hành động xảy ra trong đời thật
+•	Có thời điểm rõ ràng
+•	Không thể “chưa xảy ra mà ghi trước”
+•	Không thể đảo ngược bằng update số
+👉 Chỉ SỰ KIỆN mới được phép sinh số.
+________________________________________
+1.2. PHÂN BIỆT RÕ 3 KHÁI NIỆM (RẤT QUAN TRỌNG)
+Khái niệm	Bản chất
+Nghiệp vụ	Nhóm công việc lớn
+Sự kiện	Hành động cụ thể xảy ra
+Chứng từ	Bằng chứng ghi lại sự kiện
+👉 API chỉ đại diện cho SỰ KIỆN, không đại diện cho bảng.
+________________________________________
+2. DANH SÁCH SỰ KIỆN NGHIỆP VỤ TOÀN HỆ THỐNG CTVT3
+Dựa trên Sơ đồ 1 + Sơ đồ 4, toàn hệ thống chỉ có NHỮNG SỰ KIỆN SAU.
+(1) SỰ KIỆN LIÊN QUAN ĐẾN HÓA ĐƠN
+1.	Lập hóa đơn (nháp)
+2.	Ghi chi tiết hóa đơn (nếu có)
+3.	Xác nhận hóa đơn ⬅️ sự kiện sinh số
+4.	Chốt hóa đơn
+5.	Hủy hóa đơn
+👉 Trong đó:
+•	CHỈ “XÁC NHẬN” mới sinh kho / tiền / công nợ / VAT
+•	Lập / sửa nháp không sinh số
+________________________________________
+(2) SỰ KIỆN THU – CHI TIỀN
+6.	Ghi nhận thu tiền
+7.	Ghi nhận chi tiền
+👉 Thu – chi:
+•	Là sự kiện tiền tệ
+•	Không phải lúc nào cũng gắn với hàng
+________________________________________
+(3) SỰ KIỆN DỊCH CHUYỂN TIỀN NỘI BỘ
+8.	Nhân viên nộp tiền về công ty
+👉 Bản chất:
+•	Chỉ là chuyển ví
+•	Không sinh doanh thu
+•	Không sinh chi phí
+________________________________________
+(4) SỰ KIỆN VAT
+9.	Ghi nhận VAT đầu vào
+10.	Ghi nhận VAT đầu ra
+11.	Ghi nhận VAT cân thuế
+👉 VAT là sự kiện thuế, không phải sự kiện bán hàng.
+________________________________________
+(5) SỰ KIỆN KỲ / CHỐT (KHÔNG PHẢI NGHIỆP VỤ)
+12.	Chốt tồn kho
+13.	Chốt gas dư
+14.	Chốt quỹ
+👉 Đây là sự kiện hệ thống,
+❌ không phải nghiệp vụ phát sinh,
+❌ không được coi là nguồn sinh số.
+________________________________________
+3. PHÂN LOẠI SỰ KIỆN THEO TÍNH CHẤT
+3.1. SỰ KIỆN SINH SỐ
+•	Xác nhận hóa đơn bán
+•	Xác nhận hóa đơn nhập
+•	Ghi nhận thu tiền
+•	Ghi nhận chi tiền
+•	Ghi nhận VAT
+👉 Những sự kiện này:
+•	chỉ được ghi 1 lần
+•	không được sửa hậu quả
+________________________________________
+3.2. SỰ KIỆN TRẠNG THÁI
+•	Lập nháp
+•	Chuyển trạng thái
+•	Chốt
+•	Hủy
+👉 Không sinh số, chỉ khóa luồng.
+________________________________________
+3.3. SỰ KIỆN HỆ THỐNG
+•	Chốt ngày
+•	Rebuild snapshot
+•	Audit log
+👉 Không liên quan nghiệp vụ đời thật.
+________________________________________
+4. NGUYÊN TẮC BẤT DI BẤT DỊCH CỦA BƯỚC 2
+1.	Không có sự kiện = không có số
+2.	Mỗi sự kiện chỉ xảy ra 1 lần
+3.	Sự kiện đã xảy ra không update
+4.	Điều chỉnh = tạo sự kiện mới
+5.	Báo cáo không bao giờ là sự kiện
+👉 Đây là hàng rào bảo vệ số liệu cho toàn bộ API sau này.
+________________________________________
+5. KẾT QUẢ PHẢI ĐẠT SAU BƯỚC 2
+Sau bước này, sếp phải trả lời được:
+•	“Số này sinh ra từ sự kiện nào?”
+•	“API này đang đại diện cho sự kiện hay chỉ là CRUD?”
+•	“Nếu xóa API này, lịch sử có mất không?”
+👉 Nếu trả lời được → đủ điều kiện sang Bước 3.
+________________________________________
+6. TUYÊN BỐ KHÓA BƯỚC 2
+Từ sau Bước 2:
+•	❌ Không có API nào được sinh số nếu không gắn với sự kiện
+•	❌ Không có API “cập nhật tồn kho / công nợ”
+•	❌ Không được gộp nhiều sự kiện vào một API
+👉 API = 1 sự kiện (hoặc 1 nhóm sự kiện cùng bản chất).
+________________________________________
+

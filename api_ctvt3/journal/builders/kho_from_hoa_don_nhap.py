@@ -1,0 +1,19 @@
+from journal.entities.nhat_ky_kho import NhatKyKho
+from journal.enums.loai_nhat_ky_kho import LoaiNhatKyKho
+
+
+class KhoFromHoaDonNhap:
+    @staticmethod
+    def build(hoa_don_nhap, thoi_diem):
+        danh_sach = []
+        for ct in hoa_don_nhap.chi_tiet:
+            danh_sach.append(
+                NhatKyKho(
+                    chung_tu_id=hoa_don_nhap.id,
+                    san_pham_id=ct.san_pham_id,
+                    so_luong=ct.so_luong,
+                    loai_nhat_ky=LoaiNhatKyKho.NHAP_KHO,
+                    thoi_diem=thoi_diem,
+                )
+            )
+        return danh_sach
